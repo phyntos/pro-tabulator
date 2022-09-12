@@ -1,7 +1,5 @@
 import React from 'react';
-export interface IObject {
-    [key: string]: unknown;
-}
+export declare type IObject = Record<string, unknown>;
 export declare type AxiosParamsType<Params> = Params & {
     pageSize?: number;
     current?: number;
