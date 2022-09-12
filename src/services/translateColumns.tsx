@@ -9,19 +9,19 @@ import { IObject, ProTabulatorColumns } from '../types';
 type TranslateColumnsArgs<DataType extends IObject, Params extends IObject = IObject> = {
     columns: ProTabulatorColumns<DataType, Params>[];
     setParams: React.Dispatch<React.SetStateAction<Params>>;
-    params: Params;
     persistenceType?: 'localStorage' | 'sessionStorage' | undefined;
     tabulatorID: string;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    numbered?: boolean;
 };
 
 const translateColumns = async <DataType extends IObject, Params extends IObject = IObject>({
     columns,
     setParams,
-    params,
     persistenceType,
     tabulatorID,
     setLoading,
+    numbered,
 }: TranslateColumnsArgs<DataType, Params>): Promise<ProColumns<DataType>[]> => {
     const axiosParams = getStorageValues<Params>(tabulatorID, persistenceType);
     if (axiosParams) {
@@ -48,7 +48,7 @@ const translateColumns = async <DataType extends IObject, Params extends IObject
                     title,
                     setParams,
                     name: stringDataIndex,
-                    params: { ...params, ...axiosParams },
+                    params: axiosParams,
                     ...search,
                 };
                 if (filterProps.type === 'select' && search.type === 'select') {
@@ -80,6 +80,15 @@ const translateColumns = async <DataType extends IObject, Params extends IObject
         }),
     );
     setLoading(false);
+    if (numbered) {
+        proTableColumns.unshift({
+            title: '#',
+            dataIndex: 'numberedIndex',
+            fixed: 'left',
+            width: '50px',
+            hideInSearch: true,
+        });
+    }
     return proTableColumns;
 };
 

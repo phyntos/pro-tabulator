@@ -1,17 +1,13 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { TextSearch } from '../types';
 import { FilterProps } from './TitleFilter';
 
 type TextFilterProps = Omit<TextSearch, 'type'> & FilterProps;
 
 const TextFilter = ({ name, onChange, getValue, title, updateOnChange, getPrefixCls }: TextFilterProps) => {
-    const [value, setValue] = useState<string | undefined>(undefined);
-
-    useEffect(() => {
-        setValue(getValue(name));
-    }, []);
+    const [value, setValue] = useState<string | undefined>(getValue(name));
 
     const updateParams = (value?: string) => {
         onChange({ [name]: value || undefined });

@@ -1,5 +1,5 @@
 import { Select } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SelectSearch } from '../types';
 import { FilterProps } from './TitleFilter';
 
@@ -15,11 +15,7 @@ const SelectField = ({
     multiple,
     getPrefixCls,
 }: SelectFieldProps) => {
-    const [value, setValue] = useState<string | undefined>(undefined);
-
-    useEffect(() => {
-        setValue(getValue(name));
-    }, []);
+    const [value, setValue] = useState<string | undefined>(getValue(name));
 
     return (
         <Select

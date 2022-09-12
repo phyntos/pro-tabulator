@@ -27,7 +27,7 @@ const useProScroll = (tabulatorID: string, loading: boolean): ProTableProps<unkn
         if (loading === false) {
             setScroll(getTableScroll(tabulatorID));
         }
-    }, [width, height, loading]);
+    }, [width, height, loading, tabulatorID]);
 
     return scroll;
 };

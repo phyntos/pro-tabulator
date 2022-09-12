@@ -1,7 +1,7 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Input } from 'antd';
 import moment, { Moment } from 'moment';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { DateRangeSearch } from '../types';
 import { FilterProps } from './TitleFilter';
 
@@ -23,16 +23,9 @@ const DateRangeFilter = ({
     const [dateRange, setDateRange] = useState<{
         [key: string]: Moment | null;
     }>({
-        [after]: null,
-        [before]: null,
+        [after]: getValue(after) ? moment(getValue(after)) : null,
+        [before]: getValue(before) ? moment(getValue(before)) : null,
     });
-
-    useEffect(() => {
-        setDateRange({
-            [after]: getValue(after) ? moment(getValue(after)) : null,
-            [before]: getValue(before) ? moment(getValue(before)) : null,
-        });
-    }, []);
 
     const updateParams = (dateRange: { [key: string]: Moment | null }) => {
         const beforeDate = dateRange[before]?.format('YYYY-MM-DD');

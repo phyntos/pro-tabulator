@@ -23,7 +23,6 @@ const ProTabulator = <DataType extends IObject, Params extends IObject = IObject
     onRowClick,
     rowClassName,
 }: ProTabulatorProps<DataType, Params>) => {
-    const getCol = columnCreator<DataType, Params>();
     const actionRef = useRef<ActionType>();
     useImperativeHandle(propActionRef, () => actionRef.current);
     // const [total, setTotal] = useState<number>(0);
@@ -48,15 +47,16 @@ const ProTabulator = <DataType extends IObject, Params extends IObject = IObject
     }, [columns]);
 
     useEffect(() => {
+        const getCol = columnCreator<DataType, Params>();
         translateColumns({
             columns: typeof propColumns === 'function' ? propColumns(getCol) : propColumns,
             setParams,
-            params: { ...params, ...axiosParams },
             tabulatorID,
             persistenceType,
             setLoading: setColumnsLoading,
+            numbered,
         }).then(setColumns);
-    }, [persistenceType, tabulatorID, propColumns]);
+    }, [persistenceType, tabulatorID, propColumns, numbered]);
 
     useEffect(() => {
         if (persistenceType) {

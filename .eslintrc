@@ -18,10 +18,16 @@
     },
     "plugins": [
         "react",
+        "react-hooks",
         "prettier",
         "@typescript-eslint"
     ],
     "rules": {
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-explicit-any": "off",
         "indent": [
             "error",
             4,
