@@ -1,6 +1,7 @@
 import React from 'react';
 
-export type IObject = Record<string, unknown>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type IObject = Record<string, any>;
 
 export type AxiosParamsType<Params> = Params & {
     pageSize?: number;
