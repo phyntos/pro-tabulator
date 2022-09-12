@@ -10,9 +10,6 @@
 .@{ant-prefix} {
     &-pro-table {
         height: 100%;
-        &-pro-card-body {
-            padding: 0;
-        }
         &-list-toolbar-container {
             padding-top: 0;
         }
@@ -49,109 +46,114 @@
                 }
             }
         }
-        &-table {
-            & &-thead > tr > th&-cell {
-                padding: 0px;
-            }
-            &-column-sorter {
-                position: absolute;
-                top: 10px;
-                right: 8px;
-            }
-            &-body {
-                &::-webkit-scrollbar {
-                    height: 8px;
-                    width: 8px;
-                }
-
-                &::-webkit-scrollbar-track {
-                    border-right: 1px solid #f0f0f0;
-                    border-bottom: 1px solid #f0f0f0;
-                    box-shadow: none;
-                    background-color: #fafafa;
-                    border-radius: 0;
-                    // border-radius: 10px;
-                }
-
-                &::-webkit-scrollbar-thumb {
-                    border-radius: 0;
-                    box-shadow: none;
-                    background-color: #bfbfbf;
-                    border-right: 1px solid #f0f0f0;
-                    border-bottom: 1px solid #f0f0f0;
-                    // box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
-                }
-                &::-webkit-scrollbar-corner {
-                    border-right: 1px solid #f0f0f0;
-                    border-bottom: 1px solid #f0f0f0;
-                    background-color: #fafafa;
-                    // box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
-                }
-            }
+    }
+    &-pro-table &-table {
+        & &-thead > tr > th&-cell {
+            padding: 0px;
         }
-        &-table-pagination&-pagination {
-            margin-bottom: 0;
+        &-column-sorter {
+            position: absolute;
+            top: 10px;
+            right: 8px;
         }
-        &-filter {
-            &-space {
-                width: 100%;
-                gap: 3px !important;
-            }
-            &-title {
-                padding-top: 8px;
-                padding-inline: 8px;
-                font-weight: normal;
-                &-no-filter {
-                    padding-bottom: 27px;
-                    height: 66px;
-                }
-            }
-
-            &-field {
-                padding-bottom: 8px;
-                padding-inline: 8px;
-                cursor: auto;
-            }
-        }
-
-        &-select {
-            &-selection-placeholder {
-                font-weight: normal;
-            }
-            &-error-placeholder {
-                color: #ff4d4f;
-            }
-        }
-        &-input-group&-input-group-compact &-picker {
-            transition: 0.3s;
-            &:hover {
-                z-index: 1;
-            }
-            &-focused {
-                z-index: 2;
-            }
-        }
-        &-filter-search-btn {
-            color: rgba(0, 0, 0, 0.25);
-        }
-        &-select-selection-overflow {
-            flex-wrap: nowrap;
-            overflow-x: overlay;
-            overflow-y: hidden;
-
+        &-body {
             &::-webkit-scrollbar {
-                height: 3px;
+                height: 8px;
+                width: 8px;
             }
 
             &::-webkit-scrollbar-track {
-                box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-                border-radius: 10px;
+                border-right: 1px solid #f0f0f0;
+                border-bottom: 1px solid #f0f0f0;
+                box-shadow: none;
+                background-color: #fafafa;
+                border-radius: 0;
+                // border-radius: 10px;
             }
 
             &::-webkit-scrollbar-thumb {
-                border-radius: 10px;
-                box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+                border-radius: 0;
+                box-shadow: none;
+                background-color: #bfbfbf;
+                border-right: 1px solid #f0f0f0;
+                border-bottom: 1px solid #f0f0f0;
+                // box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
             }
+            &::-webkit-scrollbar-corner {
+                border-right: 1px solid #f0f0f0;
+                border-bottom: 1px solid #f0f0f0;
+                background-color: #fafafa;
+                // box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+            }
+        }
+    }
+    &-pro-table &-pro-card-body {
+        padding: 0;
+    }
+    &-pro-table &-table-pagination&-pagination {
+        margin-bottom: 0;
+    }
+    &-pro-table &-filter {
+        &-space {
+            width: 100%;
+            gap: 3px !important;
+        }
+        &-title {
+            padding-top: 8px;
+            padding-inline: 8px;
+            font-weight: normal;
+            &-no-filter {
+                padding-bottom: 27px;
+                height: 66px;
+            }
+        }
+
+        &-field {
+            padding-bottom: 8px;
+            padding-inline: 8px;
+            cursor: auto;
+        }
+    }
+
+    &-pro-table &-select {
+        &-selection-placeholder {
+            font-weight: normal;
+        }
+        &-error-placeholder {
+            color: #ff4d4f;
+        }
+    }
+    &-pro-table &-input-group&-input-group-compact &-picker {
+        transition: 0.3s;
+        &:hover {
+            z-index: 1;
+        }
+        &-focused {
+            z-index: 2;
+        }
+    }
+
+    &-pro-table &-filter-search-btn {
+        color: rgba(0, 0, 0, 0.25);
+    }
+
+    &-pro-table &-select-selection-overflow {
+        flex-wrap: nowrap;
+        overflow-x: overlay;
+        overflow-y: hidden;
+
+        &::-webkit-scrollbar {
+            height: 3px;
+        }
+
+        &::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
         }
     }
 }
