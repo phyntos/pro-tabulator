@@ -1,3 +1,5 @@
 node_modules/
 dist/
+example/node_modules/
 src/styles/antd.css
+dev/build/

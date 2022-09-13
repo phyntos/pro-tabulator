@@ -1,3 +1,4 @@
+import { ActionType } from '@ant-design/pro-table';
 import React from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,18 +11,14 @@ export type AxiosParamsType<Params> = Params & {
     orderBy?: string;
 };
 
-export type ProActionType = {
-    reload: (resetPageIndex?: boolean) => Promise<void>;
-};
-
-type ProColumnCreatorFunc<DataType extends IObject, Params extends IObject = IObject> = (
+export type ProColumnCreatorFunc<DataType extends IObject, Params extends IObject = IObject> = (
     dataIndex: ProTabulatorColumns<DataType, Params>['dataIndex'],
     title: ProTabulatorColumns<DataType, Params>['title'],
-    search: ProTabulatorColumns<DataType, Params>['search'],
+    search?: ProTabulatorColumns<DataType, Params>['search'],
     options?: Omit<ProTabulatorColumns<DataType, Params>, 'dataIndex' | 'title' | 'search'>,
 ) => ProTabulatorColumns<DataType, Params>;
 
-export type ProTabulatorProps<DataType extends IObject, Params extends IObject = IObject> = {
+export type ProTabulatorProps<DataType extends IObject, Params extends Record<string, any> = Record<string, any>> = {
     tabulatorID: string;
     request: (
         axiosParams: AxiosParamsType<Params>,
@@ -35,15 +32,16 @@ export type ProTabulatorProps<DataType extends IObject, Params extends IObject =
         | ProTabulatorColumns<DataType, Params>[];
     defaultPageSize?: number;
     rowKey?: string;
-    actionRef?: React.MutableRefObject<ProActionType | undefined>;
+    actionRef?: React.MutableRefObject<ActionType | undefined>;
     primaryColor?: string;
     onRowClick?: (row: DataType) => void;
     rowClassName?: (row: DataType) => string;
+    params?: Params;
 };
 
-export type OptionType = {
+export type OptionType<ValueType = string> = {
     label: string;
-    value: string;
+    value: ValueType;
     disabled?: boolean;
 };
 
@@ -51,6 +49,7 @@ export type DateRangeSearch = {
     type: 'dateRange';
     beforeName?: ((name: string) => string) | string;
     afterName?: ((name: string) => string) | string;
+    /* default: false */
     updateOnChange?: boolean;
 };
 
@@ -61,10 +60,14 @@ export type SelectSearch = {
     request?: () => Promise<OptionType[]>;
     renderOption?: boolean;
     multiple?: boolean;
+    persistenceKey?: string;
+    /* default: false */
+    updateOnChange?: boolean;
 };
 
 export type TextSearch = {
     type: 'text';
+    /* default: false */
     updateOnChange?: boolean;
 };
 

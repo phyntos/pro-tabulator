@@ -1,4 +1,6 @@
 src
+example
+dev
 
 tsconfig.json
 webpack.config.js

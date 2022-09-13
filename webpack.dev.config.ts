@@ -1,13 +1,22 @@
 import path from 'path';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import webpack from 'webpack';
+import { Configuration as WebpackConfiguration } from 'webpack';
+import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-const config: webpack.Configuration = {
+interface Configuration extends WebpackConfiguration {
+    devServer?: WebpackDevServerConfiguration;
+}
+
+const config: Configuration = {
     target: 'web',
-    entry: './src/pro-tabulator.ts',
+    entry: './dev/src/index.tsx',
     devtool: 'inline-source-map',
-    mode: 'production',
-    plugins: [new MiniCssExtractPlugin({ filename: 'pro-tabulator.css' })],
+    mode: 'development',
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './dev/src/index.html',
+        }),
+    ],
     module: {
         rules: [
             {
@@ -18,7 +27,7 @@ const config: webpack.Configuration = {
             {
                 test: /\.less$/i,
                 use: [
-                    MiniCssExtractPlugin.loader,
+                    'style-loader',
                     'css-loader',
                     {
                         loader: 'less-loader',
@@ -35,7 +44,7 @@ const config: webpack.Configuration = {
             },
             {
                 test: /\.css$/i,
-                use: [MiniCssExtractPlugin.loader, 'css-loader'],
+                use: ['style-loader', 'css-loader'],
             },
         ],
     },
@@ -43,25 +52,13 @@ const config: webpack.Configuration = {
         extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'pro-tabulator.js',
-        library: {
-            name: 'ProTabulator',
-            type: 'umd',
-        },
+        path: path.resolve(__dirname, 'dev/build'),
+        filename: 'main.js',
         clean: true,
-        umdNamedDefine: true,
     },
-    externals: {
-        react: {
-            commonjs: 'react',
-            commonjs2: 'react',
-            amd: 'react',
-            root: '_',
-        },
-    },
-    optimization: {
-        minimize: false,
+    devServer: {
+        port: 4001,
+        hot: true,
     },
 };
 

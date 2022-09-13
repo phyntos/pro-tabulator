@@ -1,8 +1,8 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Input } from 'antd';
+import { DatePicker } from 'antd';
 import moment, { Moment } from 'moment';
 import React, { useState } from 'react';
 import { DateRangeSearch } from '../types';
+import FilterSearch from './FilterSearch';
 import { FilterProps } from './TitleFilter';
 
 type DateRangeFilterProps = Omit<DateRangeSearch, 'type'> & FilterProps;
@@ -15,7 +15,6 @@ const DateRangeFilter = ({
     afterName = (name) => name + 'After',
     name,
     updateOnChange,
-    getPrefixCls,
 }: DateRangeFilterProps) => {
     const before = typeof beforeName === 'string' ? beforeName : beforeName(name);
     const after = typeof afterName === 'string' ? afterName : afterName(name);
@@ -30,8 +29,6 @@ const DateRangeFilter = ({
     const updateParams = (dateRange: { [key: string]: Moment | null }) => {
         const beforeDate = dateRange[before]?.format('YYYY-MM-DD');
         const afterDate = dateRange[after]?.format('YYYY-MM-DD');
-        console.log({ beforeDate, afterDate });
-
         onChange({
             [before]: beforeDate,
             [after]: afterDate,
@@ -39,7 +36,12 @@ const DateRangeFilter = ({
     };
 
     return (
-        <Input.Group compact>
+        <FilterSearch
+            onClick={() => {
+                updateParams(dateRange);
+            }}
+            hidden={updateOnChange}
+        >
             <DatePicker
                 value={dateRange[before]}
                 size='small'
@@ -66,17 +68,7 @@ const DateRangeFilter = ({
                 }}
                 format={(date) => date.format('DD.MM.YYYY')}
             />
-            {!updateOnChange && (
-                <Button
-                    className={getPrefixCls('filter-search-btn')}
-                    icon={<SearchOutlined />}
-                    size='small'
-                    onClick={() => {
-                        updateParams(dateRange);
-                    }}
-                />
-            )}
-        </Input.Group>
+        </FilterSearch>
     );
 };
 

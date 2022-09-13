@@ -1,9 +1,26 @@
 import { ConfigProvider } from 'antd';
 import React, { useContext } from 'react';
 
-const TitleNoFilter: React.FC<{ title: string }> = ({ title }) => {
+const TitleNoFilter: React.FC<{ title: string; isSearch: boolean }> = ({ title, isSearch }) => {
     const { getPrefixCls } = useContext(ConfigProvider.ConfigContext);
-    return <div className={`${getPrefixCls('filter-title')} ${getPrefixCls('filter-title-no-filter')}`}>{title}</div>;
+
+    const classList = [getPrefixCls('filter-title')];
+    if (isSearch) {
+        classList.push(getPrefixCls('filter-title-no-filter'));
+    } else {
+        classList.push(getPrefixCls('filter-title-no-search'));
+    }
+
+    return (
+        <div
+            onClick={(event) => {
+                event.stopPropagation();
+            }}
+            className={classList.join(' ')}
+        >
+            {title}
+        </div>
+    );
 };
 
 export default TitleNoFilter;

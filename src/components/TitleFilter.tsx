@@ -1,5 +1,5 @@
 import { ConfigProvider, Space } from 'antd';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { AxiosParamsType, DateRangeSearch, IObject, SelectSearch, TextSearch } from '../types';
 import DateRangeFilter from './DateRangeFilter';
 import SelectField from './SelectField';
@@ -18,42 +18,41 @@ export type FilterProps = {
 export type TitleFilterProps<Params> = {
     title: string;
     name: string;
-    setParams: React.Dispatch<React.SetStateAction<Params>>;
+    updateParams: (params: Params) => void;
     params: Omit<AxiosParamsType<Params>, 'current' | 'pageSize' | 'orderBy'>;
     error?: boolean;
 } & (DateRangeSearch | SelectSearch | TextSearch);
 
 const TitleFilter = <Params extends IObject>({
     title,
-    setParams,
+    updateParams,
     type,
     params,
     ...search
 }: TitleFilterProps<Params>) => {
     const { getPrefixCls } = useContext(ConfigProvider.ConfigContext);
 
-    const onChange = (obj: IObject) => {
-        setParams((params) => ({ ...params, ...obj }));
-    };
-
-    useEffect(() => {
-        console.log({ params });
-    }, [params]);
-
     const getValue = (key: string) => {
-        return params[key] as string;
+        return params[key] as any;
     };
 
     const extraProps = {
         title,
-        onChange,
+        onChange: updateParams,
         getValue,
         getPrefixCls,
     };
 
     return (
         <Space direction='vertical' className={getPrefixCls('filter-space')}>
-            <div className={getPrefixCls('filter-title')}>{title}</div>
+            <div
+                onClick={(event) => {
+                    event.stopPropagation();
+                }}
+                className={getPrefixCls('filter-title')}
+            >
+                {title}
+            </div>
             <div
                 className={getPrefixCls('filter-field')}
                 onClick={(event) => {

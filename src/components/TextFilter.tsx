@@ -1,29 +1,74 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { Button, Input } from 'antd';
-import React, { useState } from 'react';
+import { Input, InputRef } from 'antd';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TextSearch } from '../types';
+import FilterSearch from './FilterSearch';
 import { FilterProps } from './TitleFilter';
 
 type TextFilterProps = Omit<TextSearch, 'type'> & FilterProps;
 
-const TextFilter = ({ name, onChange, getValue, title, updateOnChange, getPrefixCls }: TextFilterProps) => {
-    const [value, setValue] = useState<string | undefined>(getValue(name));
+const TextFilter = ({ name, onChange, getValue, title, updateOnChange }: TextFilterProps) => {
+    const initialValue = getValue(name);
 
-    const updateParams = (value?: string) => {
-        onChange({ [name]: value || undefined });
-    };
+    const [value, setValue] = useState<string | undefined>(initialValue);
+    const [timer, setTimer] = useState<NodeJS.Timeout>();
+    const [updated, setUpdated] = useState(false);
 
+    const ref = useRef<InputRef>();
+    const isFirstRun = useRef(true);
+
+    const updateParams = useCallback(
+        (value?: string) => {
+            onChange({ [name]: value || undefined });
+            ref.current?.blur();
+            setUpdated(false);
+        },
+        [name, onChange],
+    );
+
+    useEffect(() => {
+        if (isFirstRun.current) {
+            isFirstRun.current = false;
+            return;
+        }
+        clearTimeout(timer);
+        if (!value) {
+            updateParams(value);
+        } else if (updateOnChange) {
+            setTimer(
+                setTimeout(() => {
+                    updateParams(value);
+                }, 500),
+            );
+        } else {
+            setUpdated(true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value]);
+
+    const style: React.CSSProperties = {};
+
+    if (!updateOnChange) {
+        style.width = 'calc(100% - 24px)';
+    }
+    const status = updated ? 'warning' : undefined;
     return (
-        <Input.Group compact>
+        <FilterSearch
+            hidden={updateOnChange}
+            onClick={() => {
+                updateParams(value);
+            }}
+            status={status}
+        >
             <Input
                 size='small'
+                ref={ref}
                 placeholder={`Введите ${title}`}
                 value={value}
-                style={!updateOnChange ? { width: 'calc(100% - 24px)' } : undefined}
+                status={status}
+                style={style}
                 onChange={(e) => {
                     const value = e.target.value;
                     setValue(value);
-                    if (updateOnChange) updateParams(value);
                 }}
                 onKeyDown={(e) => {
                     e.stopPropagation();
@@ -33,17 +78,7 @@ const TextFilter = ({ name, onChange, getValue, title, updateOnChange, getPrefix
                 }}
                 allowClear
             />
-            {!updateOnChange && (
-                <Button
-                    className={getPrefixCls('filter-search-btn')}
-                    icon={<SearchOutlined />}
-                    size='small'
-                    onClick={() => {
-                        updateParams(value);
-                    }}
-                />
-            )}
-        </Input.Group>
+        </FilterSearch>
     );
 };
 
