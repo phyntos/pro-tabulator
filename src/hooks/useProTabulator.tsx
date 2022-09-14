@@ -1,6 +1,6 @@
 import { ActionType } from '@ant-design/pro-table';
 import React from 'react';
-import ProTabulator from '../ProTabulator';
+import ProTabulator from '../components/ProTabulator/ProTabulator';
 import { IObject, ProTabulatorProps } from '../types';
 
 const useProTabulator = <DataType extends IObject, Params extends IObject = IObject>(

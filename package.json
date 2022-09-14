@@ -12,7 +12,8 @@
         "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\"",
         "prettier": "prettier --write \"{src,tests,example/src}/**/*.{js,ts,jsx,tsx}\"",
         "test": "jest --config jestconfig.json",
-        "prepublishOnly": "npm run antd-less && npm run prettier && npm run lint && webpack",
+        "build": "webpack --config webpack.config.ts",
+        "prepublishOnly": "npm run antd-less && npm run prettier && npm run lint && npm run build",
         "start": "webpack serve --open --config webpack.dev.config.ts"
     },
     "repository": {

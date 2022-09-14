@@ -1,5 +1,5 @@
 import { ProTableProps } from '@ant-design/pro-table';
-import { AxiosParamsType, OptionType, ProColumnCreatorFunc, SelectSearch } from '../types';
+import { AxiosParamsType, OptionType, ProColumnCreatorFunc, SelectSearch } from './types';
 
 const getStorageValues = <Params,>(tabulatorID: string, persistenceType?: 'sessionStorage' | 'localStorage') => {
     if (persistenceType) {

@@ -9,12 +9,12 @@ interface Configuration extends WebpackConfiguration {
 
 const config: Configuration = {
     target: 'web',
-    entry: './dev/src/index.tsx',
+    entry: './src/dev/index.tsx',
     devtool: 'inline-source-map',
     mode: 'development',
     plugins: [
         new HtmlWebpackPlugin({
-            template: './dev/src/index.html',
+            template: './public/index.html',
         }),
     ],
     module: {
@@ -52,7 +52,7 @@ const config: Configuration = {
         extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-        path: path.resolve(__dirname, 'dev/build'),
+        path: path.resolve(__dirname, 'build'),
         filename: 'main.js',
         clean: true,
     },

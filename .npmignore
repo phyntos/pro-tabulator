@@ -1,9 +1,11 @@
 src
-example
-dev
+public
+build
 
 tsconfig.json
 webpack.config.js
+webpack.dev.config.ts
 
-.eslintrc.js
+.eslintignore
+.eslintrc
 .prettierrc

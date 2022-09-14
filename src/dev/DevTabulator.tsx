@@ -1,8 +1,8 @@
 import moment from 'moment';
 import React from 'react';
-import ProTabulator from '../../src/ProTabulator';
+import ProTabulator from '../components/ProTabulator/ProTabulator';
 // import ProTabulator from '../ProTabulator';
-import { AxiosParamsType, OptionType } from '../../src/types';
+import { AxiosParamsType, OptionType } from '../types';
 
 type DevDataType = 'first' | 'second';
 
@@ -96,35 +96,35 @@ const DevTabulator = () => {
                     getCol(
                         'name',
                         'Наименование',
-                        // { type: 'text', updateOnChange: false },
-                        false,
+                        { type: 'text', updateOnChange: false },
+                        // false,
                         { width: '200px', sorter: true },
                     ),
                     getCol(
                         'date',
                         'Дата',
-                        // { type: 'dateRange', updateOnChange: true },
-                        false,
+                        { type: 'dateRange', updateOnChange: true },
+                        // false,
                         { width: '500px' },
                     ),
                     getCol(
                         'description',
                         'Описание',
-                        // { type: 'text' },
-                        false,
+                        { type: 'text' },
+                        // false,
                         { width: '100px' },
                     ),
                     getCol(
                         'type',
                         'Тип',
-                        // {
-                        //     type: 'select',
-                        //     request: getType,
-                        //     persistenceKey: 'type',
-                        //     renderOption: true,
-                        //     multiple: true,
-                        // },
-                        false,
+                        {
+                            type: 'select',
+                            request: getType,
+                            persistenceKey: 'type',
+                            renderOption: true,
+                            multiple: true,
+                        },
+                        // false,
                         { width: '200px', sorter: true },
                     ),
                 ]}

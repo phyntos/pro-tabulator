@@ -2,11 +2,11 @@ import ProTable, { ActionType, ProTableProps } from '@ant-design/pro-table';
 import { ConfigProvider } from 'antd';
 import ru_RU from 'antd/lib/locale-provider/ru_RU';
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { AxiosParamsType, IObject, ProTabulatorProps } from './types';
+import { AxiosParamsType, IObject, ProTabulatorProps } from '../../types';
 // Styles
-import useProColumns from './hooks/useProColumns';
-import useProScroll from './hooks/useProScroll';
-import { getStorageValues, translateParams } from './services';
+import useProColumns from '../../hooks/useProColumns';
+import useProScroll from '../../hooks/useProScroll';
+import { getStorageValues, translateParams } from '../../services';
 import './ProTabulator.less';
 
 const ProTabulator = <DataType extends IObject, Params extends Record<string, any> = Record<string, any>>({
