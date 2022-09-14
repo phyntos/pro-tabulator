@@ -1,8 +1,8 @@
 import { ProColumns } from '@ant-design/pro-table';
 import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import TitleFilter, { TitleFilterProps } from '../components/TitleFilter';
-import TitleNoFilter from '../components/TitleNoFilter';
+import TitleFilter, { TitleFilterProps } from '../filters/TitleFilter';
+import TitleNoFilter from '../filters/TitleNoFilter';
 import { columnCreator, getOptions } from '../services';
 import { IObject, ProTabulatorProps } from '../types';
 
@@ -68,9 +68,9 @@ const useProColumns = <DataType extends IObject, Params extends IObject>({
                     }
                     if (search.type === 'dateRange') {
                         if (search.updateOnChange) {
-                            proColumn.width = '299px';
+                            proColumn.width = '296px';
                         } else {
-                            proColumn.width = '323px';
+                            proColumn.width = '320px';
                         }
                         proColumn.renderText = (value: string) => moment(value).format('DD.MM.YYYY HH:mm');
                     }

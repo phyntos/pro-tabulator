@@ -5,9 +5,9 @@ import FilterSearch from './FilterSearch';
 import { FilterProps } from './TitleFilter';
 import { BaseSelectRef } from 'rc-select/lib/BaseSelect';
 
-type SelectFieldProps = FilterProps & Omit<SelectSearch, 'type'>;
+type SelectFilterProps = FilterProps & Omit<SelectSearch, 'type'>;
 
-const SelectField = ({
+const SelectFilter = ({
     getValue,
     name,
     onChange,
@@ -17,7 +17,7 @@ const SelectField = ({
     multiple,
     getPrefixCls,
     updateOnChange,
-}: SelectFieldProps) => {
+}: SelectFilterProps) => {
     const [value, setValue] = useState<string | string[] | undefined>(getValue(name));
     const [timer, setTimer] = useState<NodeJS.Timeout>();
     const [updated, setUpdated] = useState(false);
@@ -89,4 +89,4 @@ const SelectField = ({
     );
 };
 
-export default SelectField;
+export default SelectFilter;

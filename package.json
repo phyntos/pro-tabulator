@@ -9,11 +9,14 @@
     ],
     "scripts": {
         "antd-less": "lessc --js --modify-var=\"ant-prefix=tabulator\" node_modules/antd/dist/antd.variable.less src/styles/antd.css",
+        "table-css-copy": "cp node_modules/@ant-design/pro-table/dist/table.css src/styles",
+        "table-css-replace": "replace-in-file --configFile=replace.config.js",
+        "styles": "npm run antd-less && npm run table-css-copy && npm run table-css-replace",
         "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\"",
         "prettier": "prettier --write \"{src,tests,example/src}/**/*.{js,ts,jsx,tsx}\"",
         "test": "jest --config jestconfig.json",
         "build": "webpack --config webpack.config.ts",
-        "prepublishOnly": "npm run antd-less && npm run prettier && npm run lint && npm run build",
+        "prepublishOnly": "npm run styles && npm run prettier && npm run lint && npm run build",
         "start": "webpack serve --open --config webpack.dev.config.ts"
     },
     "repository": {
@@ -42,7 +45,9 @@
         "less-loader": "^11.0.0",
         "mini-css-extract-plugin": "^2.6.1",
         "moment": "^2.29.4",
+        "null-loader": "^4.0.1",
         "prettier": "^2.7.1",
+        "replace-in-file": "^6.3.5",
         "style-loader": "^3.3.1",
         "ts-loader": "^9.3.1",
         "ts-node": "^10.9.1",

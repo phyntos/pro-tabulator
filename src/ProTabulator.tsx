@@ -2,12 +2,13 @@ import ProTable, { ActionType, ProTableProps } from '@ant-design/pro-table';
 import { ConfigProvider } from 'antd';
 import ru_RU from 'antd/lib/locale-provider/ru_RU';
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { AxiosParamsType, IObject, ProTabulatorProps } from '../../types';
+import { AxiosParamsType, IObject, ProTabulatorProps } from './types';
 // Styles
-import useProColumns from '../../hooks/useProColumns';
-import useProScroll from '../../hooks/useProScroll';
-import { getStorageValues, translateParams } from '../../services';
-import './ProTabulator.less';
+import useOptions from './hooks/useOptions';
+import useProColumns from './hooks/useProColumns';
+import useProScroll from './hooks/useProScroll';
+import { getStorageValues, translateParams } from './services';
+import './styles/index.less';
 
 const ProTabulator = <DataType extends IObject, Params extends Record<string, any> = Record<string, any>>({
     persistenceType,
@@ -22,6 +23,7 @@ const ProTabulator = <DataType extends IObject, Params extends Record<string, an
     onRowClick,
     rowClassName,
     params: propParams,
+    hideToolbar,
 }: ProTabulatorProps<DataType, Params>) => {
     const actionRef = useRef<ActionType>();
     useImperativeHandle(propActionRef, () => actionRef.current);
@@ -75,6 +77,8 @@ const ProTabulator = <DataType extends IObject, Params extends Record<string, an
         return { data, success: true, total: response.total };
     };
 
+    const toolbar = useOptions(hideToolbar);
+
     return (
         <ConfigProvider locale={ru_RU} prefixCls='tabulator'>
             <ProTable<DataType, Params>
@@ -87,6 +91,7 @@ const ProTabulator = <DataType extends IObject, Params extends Record<string, an
                 options={{
                     density: false,
                 }}
+                toolbar={toolbar}
                 loading={loading === undefined ? undefined : loading || columnsLoading}
                 onLoadingChange={(changedLoading) => {
                     setLoading(typeof changedLoading === 'boolean' ? changedLoading : changedLoading.spinning);

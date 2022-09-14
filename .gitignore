@@ -1,4 +1,5 @@
 node_modules/
 dist/
 src/styles/antd.css
+src/styles/table.css
 build/

@@ -26,21 +26,13 @@ const config: Configuration = {
             },
             {
                 test: /\.less$/i,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    {
-                        loader: 'less-loader',
-                        options: {
-                            lessOptions: {
-                                modifyVars: {
-                                    'ant-prefix': 'tabulator',
-                                },
-                                javascriptEnabled: true,
-                            },
-                        },
-                    },
-                ],
+                use: 'null-loader',
+                exclude: /src/,
+            },
+            {
+                test: /\.less$/i,
+                use: ['style-loader', 'css-loader', 'less-loader'],
+                exclude: /node_modules/,
             },
             {
                 test: /\.css$/i,

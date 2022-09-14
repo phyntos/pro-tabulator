@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React from 'react';
-import ProTabulator from '../components/ProTabulator/ProTabulator';
+import ProTabulator from '../ProTabulator';
 // import ProTabulator from '../ProTabulator';
 import { AxiosParamsType, OptionType } from '../types';
 
@@ -89,6 +89,8 @@ const DevTabulator = () => {
                 numbered
                 persistenceType='sessionStorage'
                 request={getData}
+                primaryColor='green'
+                hideToolbar
                 // params={{
                 //     type: ['first'],
                 // }}
@@ -103,7 +105,7 @@ const DevTabulator = () => {
                     getCol(
                         'date',
                         'Дата',
-                        { type: 'dateRange', updateOnChange: true },
+                        { type: 'dateRange', updateOnChange: false },
                         // false,
                         { width: '500px' },
                     ),

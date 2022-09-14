@@ -2,7 +2,7 @@ import { ConfigProvider, Space } from 'antd';
 import React, { useContext } from 'react';
 import { AxiosParamsType, DateRangeSearch, IObject, SelectSearch, TextSearch } from '../types';
 import DateRangeFilter from './DateRangeFilter';
-import SelectField from './SelectField';
+import SelectFilter from './SelectFilter';
 import TextFilter from './TextFilter';
 
 export type FilterProps = {
@@ -61,7 +61,7 @@ const TitleFilter = <Params extends IObject>({
             >
                 {type === 'text' && <TextFilter {...search} {...extraProps} />}
                 {type === 'dateRange' && <DateRangeFilter {...search} {...extraProps} />}
-                {type === 'select' && <SelectField {...search} {...extraProps} />}
+                {type === 'select' && <SelectFilter {...search} {...extraProps} />}
             </div>
         </Space>
     );

@@ -1,4 +1,4 @@
-import ProTabulator from './components/ProTabulator/ProTabulator';
+import ProTabulator from './ProTabulator';
 import useProTabulator from './hooks/useProTabulator';
 
 export { ProTabulator, useProTabulator };
