@@ -15,7 +15,7 @@ const useOptions = (hideToolbar: boolean): ProTableProps<any, any>['toolbar'] =>
 
     return {
         className: classList.join(' '),
-        title: <Options key='options' className={className} setClassName={setClassName} />,
+        title: hideToolbar ? <Options key='options' className={className} setClassName={setClassName} /> : undefined,
     };
 };
 
