@@ -22,13 +22,13 @@ const config: webpack.Configuration = {
                 exclude: /src/,
             },
             {
+                test: /\.css$/i,
+                use: 'null-loader',
+            },
+            {
                 test: /\.less$/i,
                 use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
                 exclude: /node_modules/,
-            },
-            {
-                test: /\.css$/i,
-                use: [MiniCssExtractPlugin.loader, 'css-loader'],
             },
         ],
     },
