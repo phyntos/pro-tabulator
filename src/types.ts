@@ -37,7 +37,14 @@ export type ProTabulatorProps<DataType extends IObject, Params extends Record<st
     onRowClick?: (row: DataType) => void;
     rowClassName?: (row: DataType) => string;
     params?: Params;
-    hideToolbar?: boolean;
+    toolbar?: {
+        hidden?: boolean;
+        title?: string;
+        options?: {
+            reload?: boolean;
+            setting?: boolean;
+        };
+    };
 };
 
 export type OptionType<ValueType = string> = {

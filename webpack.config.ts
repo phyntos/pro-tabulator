@@ -1,11 +1,12 @@
 import path from 'path';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
 import webpack from 'webpack';
 
 const config: webpack.Configuration = {
     target: 'web',
     entry: './src/pro-tabulator.ts',
-    devtool: 'inline-source-map',
     mode: 'production',
     plugins: [new MiniCssExtractPlugin({ filename: 'pro-tabulator.css' })],
     module: {
@@ -13,7 +14,7 @@ const config: webpack.Configuration = {
             {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
-                exclude: /node_modules/,
+                exclude: [/node_modules/, path.resolve(__dirname, './src/dev/')],
             },
             {
                 test: /\.less$/i,
@@ -45,15 +46,15 @@ const config: webpack.Configuration = {
         umdNamedDefine: true,
     },
     externals: {
-        react: {
-            commonjs: 'react',
-            commonjs2: 'react',
-            amd: 'react',
-            root: '_',
-        },
+        react: 'react',
+        '@ant-design/pro-table': '@ant-design/pro-table',
+        antd: 'antd',
+        moment: 'moment',
+        '@ant-design/icons': '@ant-design/icons',
     },
     optimization: {
-        minimize: false,
+        minimize: true,
+        minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
     },
 };
 

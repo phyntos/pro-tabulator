@@ -1,6 +1,5 @@
 import ProTable, { ActionType, ProTableProps } from '@ant-design/pro-table';
 import { ConfigProvider } from 'antd';
-import ru_RU from 'antd/lib/locale-provider/ru_RU';
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { AxiosParamsType, IObject, ProTabulatorProps } from './types';
 // Styles
@@ -23,7 +22,7 @@ const ProTabulator = <DataType extends IObject, Params extends Record<string, an
     onRowClick,
     rowClassName,
     params: propParams,
-    hideToolbar,
+    toolbar: { options, hidden, title },
 }: ProTabulatorProps<DataType, Params>) => {
     const actionRef = useRef<ActionType>();
     useImperativeHandle(propActionRef, () => actionRef.current);
@@ -77,10 +76,10 @@ const ProTabulator = <DataType extends IObject, Params extends Record<string, an
         return { data, success: true, total: response.total };
     };
 
-    const toolbar = useOptions(hideToolbar);
+    const toolbar = useOptions(hidden, title);
 
     return (
-        <ConfigProvider locale={ru_RU} prefixCls='tabulator'>
+        <ConfigProvider prefixCls='tabulator'>
             <ProTable<DataType, Params>
                 className={tabulatorID}
                 request={tableRequest}
@@ -90,6 +89,7 @@ const ProTabulator = <DataType extends IObject, Params extends Record<string, an
                 params={params}
                 options={{
                     density: false,
+                    ...options,
                 }}
                 toolbar={toolbar}
                 loading={loading === undefined ? undefined : loading || columnsLoading}

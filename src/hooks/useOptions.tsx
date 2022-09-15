@@ -2,11 +2,11 @@ import { ProTableProps } from '@ant-design/pro-table';
 import React, { useState } from 'react';
 import Options from '../components/Options';
 
-const useOptions = (hideToolbar: boolean): ProTableProps<any, any>['toolbar'] => {
+const useOptions = (hidden: boolean, title: string): ProTableProps<any, any>['toolbar'] => {
     const [className, setClassName] = useState<string>();
 
     const classList = [];
-    if (hideToolbar) {
+    if (hidden) {
         classList.push('tabulator-hide-toolbar');
     }
     if (className) {
@@ -15,7 +15,7 @@ const useOptions = (hideToolbar: boolean): ProTableProps<any, any>['toolbar'] =>
 
     return {
         className: classList.join(' '),
-        title: hideToolbar ? <Options key='options' className={className} setClassName={setClassName} /> : undefined,
+        title: hidden ? <Options key='options' className={className} setClassName={setClassName} /> : title,
     };
 };
 
