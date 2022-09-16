@@ -1,9 +1,6 @@
 import { ActionType } from '@ant-design/pro-table';
 import React from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type IObject = Record<string, any>;
-
 export type AxiosParamsType<Params> = Params & {
     pageSize?: number;
     current?: number;
@@ -11,14 +8,20 @@ export type AxiosParamsType<Params> = Params & {
     orderBy?: string;
 };
 
-export type ProColumnCreatorFunc<DataType extends IObject, Params extends IObject = IObject> = (
+export type ProColumnCreatorFunc<
+    DataType extends Record<string, any>,
+    Params extends Record<string, any> = Record<string, any>,
+> = (
     dataIndex: ProTabulatorColumns<DataType, Params>['dataIndex'],
     title: ProTabulatorColumns<DataType, Params>['title'],
     search?: ProTabulatorColumns<DataType, Params>['search'],
     options?: Omit<ProTabulatorColumns<DataType, Params>, 'dataIndex' | 'title' | 'search'>,
 ) => ProTabulatorColumns<DataType, Params>;
 
-export type ProTabulatorProps<DataType extends IObject, Params extends Record<string, any> = Record<string, any>> = {
+export type ProTabulatorProps<
+    DataType extends Record<string, any>,
+    Params extends Record<string, any> = Record<string, any>,
+> = {
     tabulatorID: string;
     request: (
         axiosParams: AxiosParamsType<Params>,
@@ -80,8 +83,8 @@ export type TextSearch = {
 };
 
 export type ProTabulatorColumns<
-    DataType extends IObject,
-    Params extends IObject = IObject,
+    DataType extends Record<string, any>,
+    Params extends Record<string, any> = Record<string, any>,
     Key extends keyof DataType | keyof Params = keyof DataType | keyof Params,
 > = {
     dataIndex: Key;

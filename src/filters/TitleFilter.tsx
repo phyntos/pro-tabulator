@@ -1,6 +1,6 @@
 import { ConfigProvider, Space } from 'antd';
 import React, { useContext } from 'react';
-import { AxiosParamsType, DateRangeSearch, IObject, SelectSearch, TextSearch } from '../types';
+import { AxiosParamsType, DateRangeSearch, SelectSearch, TextSearch } from '../types';
 import DateRangeFilter from './DateRangeFilter';
 import SelectFilter from './SelectFilter';
 import TextFilter from './TextFilter';
@@ -9,7 +9,7 @@ export type FilterProps = {
     name: string;
     title: string;
     error?: boolean;
-    onChange: (obj: IObject) => void;
+    onChange: (obj: Record<string, any>) => void;
     getValue: (key: string) => string;
     getPrefixCls: (suffixCls?: string | undefined, customizePrefixCls?: string | undefined) => string;
     initialValue?: string;
@@ -23,7 +23,7 @@ export type TitleFilterProps<Params> = {
     error?: boolean;
 } & (DateRangeSearch | SelectSearch | TextSearch);
 
-const TitleFilter = <Params extends IObject>({
+const TitleFilter = <Params extends Record<string, any>>({
     title,
     updateParams,
     type,

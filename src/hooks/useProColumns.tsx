@@ -4,16 +4,16 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TitleFilter, { TitleFilterProps } from '../filters/TitleFilter';
 import TitleNoFilter from '../filters/TitleNoFilter';
 import { columnCreator, getOptions } from '../services';
-import { IObject, ProTabulatorProps } from '../types';
+import { ProTabulatorProps } from '../types';
 
-type ProColumnsHookArgs<DataType extends IObject, Params extends IObject> = Pick<
+type ProColumnsHookArgs<DataType extends Record<string, any>, Params extends Record<string, any>> = Pick<
     ProTabulatorProps<DataType, Params>,
     'columns' | 'params' | 'numbered'
 > & {
     updateParams: (params: Params) => void;
 };
 
-const useProColumns = <DataType extends IObject, Params extends IObject>({
+const useProColumns = <DataType extends Record<string, any>, Params extends Record<string, any>>({
     columns: tabulatorColumns,
     params,
     updateParams,

@@ -1,15 +1,14 @@
 import ProTable, { ActionType, ProTableProps } from '@ant-design/pro-table';
 import { ConfigProvider } from 'antd';
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { AxiosParamsType, IObject, ProTabulatorProps } from './types';
-// Styles
 import useOptions from './hooks/useOptions';
 import useProColumns from './hooks/useProColumns';
 import useProScroll from './hooks/useProScroll';
 import { getStorageValues, translateParams } from './services';
 import './styles/index.less';
+import { AxiosParamsType, ProTabulatorProps } from './types';
 
-const ProTabulator = <DataType extends IObject, Params extends Record<string, any> = Record<string, any>>({
+const ProTabulator = <DataType extends Record<string, any>, Params extends Record<string, any> = Record<string, any>>({
     persistenceType,
     request,
     numbered,
@@ -32,7 +31,7 @@ const ProTabulator = <DataType extends IObject, Params extends Record<string, an
 
     const storageParams = getStorageValues<Params>(tabulatorID, persistenceType);
     const [params, setParams] = useState<Params>({ ...storageParams, ...propParams });
-    const updateParams = useCallback((obj: IObject) => {
+    const updateParams = useCallback((obj: Record<string, any>) => {
         setParams((params) => ({ ...params, ...obj }));
     }, []);
     const { columns, columnsLoading } = useProColumns({
