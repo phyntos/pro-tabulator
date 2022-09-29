@@ -24,20 +24,6 @@ const config: Configuration = {
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
-            {
-                test: /\.less$/i,
-                use: 'null-loader',
-                exclude: /src/,
-            },
-            {
-                test: /\.less$/i,
-                use: ['style-loader', 'css-loader', 'less-loader'],
-                exclude: /node_modules/,
-            },
-            {
-                test: /\.css$/i,
-                use: ['style-loader', 'css-loader'],
-            },
         ],
     },
     resolve: {
