@@ -1,17 +1,24 @@
 import path from 'path';
 import TerserPlugin from 'terser-webpack-plugin';
 import webpack from 'webpack';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 
 const config: webpack.Configuration = {
     target: 'web',
     entry: './src/index.ts',
     mode: 'production',
+    plugins: [new MiniCssExtractPlugin({ filename: 'index.css' })],
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: [/node_modules/, path.resolve(__dirname, './src/dev/')],
+            },
+            {
+                test: /\.css$/i,
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
             },
         ],
     },
@@ -33,7 +40,7 @@ const config: webpack.Configuration = {
     },
     optimization: {
         minimize: true,
-        minimizer: [new TerserPlugin()],
+        minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
     },
 };
 

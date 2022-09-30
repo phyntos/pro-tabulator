@@ -1,6 +1,8 @@
 {
     "env": {
         "browser": true,
+        "amd": true,
+        "node": true,
         "es2021": true
     },
     "extends": [
@@ -28,10 +30,6 @@
         "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/no-explicit-any": "off",
-        "linebreak-style": [
-            "error",
-            "windows"
-        ],
         "quotes": [
             "error",
             "single"

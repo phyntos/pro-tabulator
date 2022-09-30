@@ -1,3 +1,4 @@
-import ProTabulator from './ProTabulator/ProTabulator';
+import Table from './components/Table/Table';
+import './index.css';
 
-export { ProTabulator };
+export { Table as ProTabulator };

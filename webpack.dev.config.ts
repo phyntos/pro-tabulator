@@ -1,7 +1,8 @@
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'path';
 import { Configuration as WebpackConfiguration } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 interface Configuration extends WebpackConfiguration {
     devServer?: WebpackDevServerConfiguration;
@@ -13,6 +14,7 @@ const config: Configuration = {
     devtool: 'inline-source-map',
     mode: 'development',
     plugins: [
+        new MiniCssExtractPlugin({ filename: 'index.css' }),
         new HtmlWebpackPlugin({
             template: './public/index.html',
         }),
@@ -23,6 +25,10 @@ const config: Configuration = {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
+            },
+            {
+                test: /\.css$/i,
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
             },
         ],
     },
