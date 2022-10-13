@@ -12,7 +12,7 @@
         "prettier": "prettier --write \"{src,tests,example/src}/**/*.{js,ts,jsx,tsx}\"",
         "build": "webpack --config webpack.config.ts",
         "prepublishOnly": "npm run prettier && npm run lint && npm run build",
-        "start": "webpack serve --open --config webpack.dev.config.ts"
+        "start": "webpack serve --open --config webpack.dev.ts"
     },
     "repository": {
         "type": "git",

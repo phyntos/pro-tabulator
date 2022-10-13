@@ -8,6 +8,12 @@ type DataType = {
     description: string;
 };
 
+type DataTypeFilter = {
+    id: number;
+    name: string;
+    description: string;
+};
+
 const dataCreator = (length: number) => {
     const data: DataType[] = [];
     for (let i = 0; i < length; i++) {
@@ -45,6 +51,40 @@ export const getSortedData = (data: DataType[], sorter: SorterType<DataType>) =>
     });
 };
 
+type PickByType<T, Value> = {
+    [P in keyof T as T[P] extends Value | undefined ? P : never]: T[P];
+};
+
+export const filterString = (
+    data: DataType[],
+    filter: DataTypeFilter,
+    key: keyof PickByType<DataType, string>,
+): DataType[] => {
+    if (filter[key]) {
+        return data.filter((item) => item[key].includes(filter[key]));
+    }
+    return data;
+};
+
+export const filterNumber = (
+    data: DataType[],
+    filter: DataTypeFilter,
+    key: keyof PickByType<DataType, number>,
+): DataType[] => {
+    if (filter[key]) {
+        return data.filter((item) => item[key] === filter[key]);
+    }
+    return data;
+};
+
+export const getFilteredData = (data: DataType[], filter: DataTypeFilter) => {
+    let filteredData = [...data];
+    filteredData = filterNumber(filteredData, filter, 'id');
+    filteredData = filterString(filteredData, filter, 'description');
+    filteredData = filterString(filteredData, filter, 'name');
+    return filteredData;
+};
+
 const DevTabulator = () => {
     const [color, setColor] = useState<ColorType>('indigo');
     const columns: TableColumnType<DataType>[] = [
@@ -57,6 +97,7 @@ const DevTabulator = () => {
             key: 'name',
             title: 'Name',
             width: 'w-1/2',
+            filter: 'text',
         },
         {
             key: 'description',
@@ -67,15 +108,20 @@ const DevTabulator = () => {
 
     return (
         <div className='p-5'>
-            <Table<DataType>
+            <Table<DataType, DataTypeFilter>
                 rowKey='id'
                 type='remote'
                 columns={columns}
-                dataSource={async (params, sorters) => {
+                dataSource={async (pagination, sorter, filter) => {
+                    console.log({ pagination, sorter, filter });
+
                     return new Promise((resolve) => {
                         setTimeout(() => {
                             resolve({
-                                data: getPaginatedData(getSortedData(data, sorters), params),
+                                data: getPaginatedData(
+                                    getSortedData(getFilteredData(data, filter), sorter),
+                                    pagination,
+                                ),
                                 total: data.length,
                             });
                         }, 500);

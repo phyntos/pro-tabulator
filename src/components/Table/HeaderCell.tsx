@@ -1,23 +1,33 @@
 import clsx from 'clsx';
 import React from 'react';
-import { WidthClassType } from '../../tailwindTypes';
-// import Search from '../Common/Search';
+import Search from '../Common/Search';
 import Sorter, { SortDirection } from '../Common/Sorter';
+import { TableColumnType } from './Table';
 
 const HeaderCell: React.FC<{
-    width?: WidthClassType;
-    key: string;
+    column: TableColumnType<any>;
+    filter?: Record<string, any>;
+    setFilter?: (filter?: Record<string, any>) => void;
     direction: SortDirection;
     setDirection: (sorters: SortDirection) => void;
-}> = ({ children, width, direction: sorter, setDirection: setSorter }) => {
+}> = ({ children, column, direction, setDirection, filter, setFilter }) => {
     return (
-        <th className={clsx('px-3 py-2 border', width)} scope='col'>
+        <th className={clsx('px-3 py-2 border relative', column.width)} scope='col'>
             <div className='flex flex-col'>
                 <div className='flex justify-between items-center'>
                     {children}
-                    <Sorter direction={sorter} setDirection={setSorter} />
+                    <div className='flex gap-1 items-center'>
+                        {column.filter === 'text' && (
+                            <Search
+                                value={filter[column.key]}
+                                onChange={(value: string) => {
+                                    setFilter({ [column.key]: value });
+                                }}
+                            />
+                        )}
+                        <Sorter direction={direction} setDirection={setDirection} />
+                    </div>
                 </div>
-                {/* <Search value={''} onChange={() => {}} /> */}
             </div>
         </th>
     );
