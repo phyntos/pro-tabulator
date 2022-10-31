@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Table, { getPaginatedData, SorterType, TableColumnType } from '../components/Table/Table';
+import Table, { getPaginatedData } from '../components/Table/Table';
 import { ColorType } from '../contexts/ColorContext';
+import { SorterType, TableColumnType } from '../types/table';
 
 type DataType = {
     id: number;
@@ -20,7 +21,10 @@ const dataCreator = (length: number) => {
         data.push({
             id: i + 1,
             name: (Math.random() + 1).toString(36).substring(7),
-            description: (Math.random() + 1).toString(36).substring(2),
+            description:
+                (Math.random() + 1).toString(36).substring(2) +
+                (Math.random() + 1).toString(36).substring(2) +
+                (Math.random() + 1).toString(36).substring(2),
         });
     }
     return data;
@@ -91,17 +95,20 @@ const DevTabulator = () => {
         {
             key: 'id',
             title: 'ID',
-            width: 'w-1/5',
+            width: '48px',
+            filter: 'text',
         },
         {
             key: 'name',
             title: 'Name',
-            width: 'w-1/2',
+            width: '100%',
             filter: 'text',
         },
         {
             key: 'description',
             title: 'Description',
+            filter: 'text',
+            width: '32px',
         },
     ];
     const data = dataCreator(190);

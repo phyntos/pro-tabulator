@@ -2,8 +2,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
 import React, { useContext } from 'react';
 import ColorContext from '../../contexts/ColorContext';
-
-export type SortDirection = 'asc' | 'desc' | 'none';
+import { SortDirection } from '../../types/table';
 
 type SorterProps = {
     direction: SortDirection;

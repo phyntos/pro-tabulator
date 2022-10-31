@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+table::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+table::-webkit-scrollbar-track {
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: none;
+    background-color: #fafafa;
+    border-radius: 0;
+}
+
+table::-webkit-scrollbar-thumb {
+    border-radius: 0;
+    box-shadow: none;
+    background-color: #bfbfbf;
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+}
+table::-webkit-scrollbar-corner {
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: #fafafa;
+}
+table::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}

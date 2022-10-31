@@ -3,6 +3,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import path from 'path';
 import { Configuration as WebpackConfiguration } from 'webpack';
 import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 interface Configuration extends WebpackConfiguration {
     devServer?: WebpackDevServerConfiguration;
@@ -18,6 +19,7 @@ const config: Configuration = {
         new HtmlWebpackPlugin({
             template: './public/index.html',
         }),
+        new ForkTsCheckerWebpackPlugin(),
     ],
     module: {
         rules: [

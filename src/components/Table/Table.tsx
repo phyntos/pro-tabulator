@@ -1,28 +1,14 @@
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import ColorContext, { ColorType } from '../../contexts/ColorContext';
-import { WidthClassType } from '../../tailwindTypes';
-import { SortDirection } from '../Common/Sorter';
+import { SortDirection, SorterType, TableColumnType } from '../../types/table';
 import Spinner from '../Common/Spinner';
 import Pagination, { PaginationType } from '../Pagination/Pagination';
 import Cell from './Cell';
 import HeaderCell from './HeaderCell';
 import Row from './Row';
 
-export type TableColumnType<DataType> = {
-    title: string;
-    key: Extract<keyof DataType, string>;
-    width?: WidthClassType;
-    filter?: ColumnFilterType;
-};
-
 type RequestType<DataType> = { data: DataType[]; total: number };
-export type ColumnFilterType = 'number' | 'text';
-
-export type SorterType<DataType> = {
-    key?: Extract<keyof DataType, string>;
-    direction: SortDirection;
-};
 
 type TableBaseProps<DataType, DataTypeFilter> = {
     columns: TableColumnType<DataType>[];
@@ -111,16 +97,17 @@ const Table = <DataType extends Record<string, any>, DataTypeFilter extends Reco
                 >
                     <Spinner />
                 </div>
-                <table className='table-auto w-full text-sm text-left text-gray-500'>
+                <table className='table-auto w-full block overflow-x-auto text-sm text-left text-gray-500'>
                     <thead className='text-xs text-gray-700 bg-gray-50'>
                         <tr>
-                            {columns.map((column) => {
+                            {columns.map((column, index) => {
                                 let direction: SortDirection = 'none';
                                 if (sorter.key === column.key) {
                                     direction = sorter.direction;
                                 }
                                 return (
                                     <HeaderCell
+                                        index={index}
                                         column={column}
                                         key={'head_' + column.key}
                                         filter={filter}
@@ -142,7 +129,9 @@ const Table = <DataType extends Record<string, any>, DataTypeFilter extends Reco
                             return (
                                 <Row key={rowKeyData}>
                                     {columns.map((column) => (
-                                        <Cell key={rowKeyData + column.key}>{item[column.key]}</Cell>
+                                        <Cell column={column} key={rowKeyData + column.key}>
+                                            {item[column.key]}
+                                        </Cell>
                                     ))}
                                 </Row>
                             );
