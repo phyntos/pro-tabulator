@@ -1,0 +1,59 @@
+{
+    "html.autoClosingTags": true,
+    "javascript.autoClosingTags": true,
+    "typescript.autoClosingTags": true,
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[less]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[scss]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "tailwindCSS.experimental.classRegex": [
+        [
+            "clsx\\(([^)]*)\\)",
+            "(?:'|\"|`)([^']*)(?:'|\"|`)",
+        ],
+        [
+            "className \\:([^,]*),",
+            "'([^']*)'"
+        ]
+    ],
+    "tailwindCSS.includeLanguages": {
+        "typescript": "typescript",
+        "typescriptreact": "typescriptreact",
+        "javascript": "javascript",
+        "javascriptreact": "javascriptreact"
+    },
+    "editor.quickSuggestions": {
+        "strings": "on"
+    },
+    "editor.stickyScroll.enabled": true,
+    "tsEssentialPlugins.patchOutline": true
+}
