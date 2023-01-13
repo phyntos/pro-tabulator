@@ -5,7 +5,6 @@ build
 tsconfig.json
 webpack.config.js
 webpack.dev.config.ts
-replace.config.js
 
 .eslintignore
 .eslintrc

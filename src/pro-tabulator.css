@@ -1,0 +1,39 @@
+.tabulator-pro-table {
+    /* display: flex;
+    flex-direction: column; */
+    /* height: 500px; */
+}
+
+.tabulator-table-wrapper {
+    flex: 1;
+    min-height: 0;
+}
+
+.tabulator-table-body {
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.tabulator-pro-table-list-toolbar-container {
+    column-gap: 10px;
+    flex-direction: row !important;
+}
+
+.tabulator-pro-table-list-toolbar-left {
+    margin-block-end: 0 !important;
+}
+
+.tabulator-pro-table-list-toolbar-right {
+    flex-wrap: nowrap !important;
+    flex: 1;
+    min-width: 0;
+}
+
+.tabulator-pro-table-list-toolbar-filter {
+    margin-inline-end: auto !important;
+    overflow-x: auto;
+}
+
+.tabulator-pro-form-light-filter-container {
+    flex-wrap: nowrap !important;
+}

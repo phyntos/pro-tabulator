@@ -25,16 +25,6 @@ const config: Configuration = {
                 exclude: /node_modules/,
             },
             {
-                test: /\.less$/i,
-                use: 'null-loader',
-                exclude: /src/,
-            },
-            {
-                test: /\.less$/i,
-                use: ['style-loader', 'css-loader', 'less-loader'],
-                exclude: /node_modules/,
-            },
-            {
                 test: /\.css$/i,
                 use: ['style-loader', 'css-loader'],
             },
@@ -42,6 +32,9 @@ const config: Configuration = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        fallback: {
+            process: false,
+        },
     },
     output: {
         path: path.resolve(__dirname, 'build'),

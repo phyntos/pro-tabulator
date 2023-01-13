@@ -16,20 +16,6 @@ const config: webpack.Configuration = {
                 use: 'ts-loader',
                 exclude: [/node_modules/, path.resolve(__dirname, './src/dev/')],
             },
-            {
-                test: /\.less$/i,
-                use: 'null-loader',
-                exclude: /src/,
-            },
-            {
-                test: /\.css$/i,
-                use: 'null-loader',
-            },
-            {
-                test: /\.less$/i,
-                use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
-                exclude: /node_modules/,
-            },
         ],
     },
     resolve: {
