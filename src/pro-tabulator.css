@@ -1,9 +1,3 @@
-.tabulator-pro-table {
-    /* display: flex;
-    flex-direction: column; */
-    /* height: 500px; */
-}
-
 .tabulator-table-wrapper {
     flex: 1;
     min-height: 0;

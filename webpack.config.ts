@@ -37,10 +37,7 @@ const config: webpack.Configuration = {
     },
     externals: {
         react: 'react',
-        '@ant-design/pro-table': '@ant-design/pro-table',
-        antd: 'antd',
-        moment: 'moment',
-        '@ant-design/icons': '@ant-design/icons',
+        'react-dom': 'react-dom',
     },
     optimization: {
         minimize: true,
