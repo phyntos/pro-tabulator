@@ -56,6 +56,7 @@ export type ProTabulatorProps<
 > = {
     columns: ProTabulatorPropsColumn<DataSource>[];
     hiddenFilter?: boolean;
+    rowClick?: (row: DataSource) => void;
 } & (
     | {
           dataSource: DataSource[];
@@ -75,6 +76,7 @@ const ProTabulator = <
     hiddenFilter,
     dataSource,
     request,
+    rowClick,
 }: ProTabulatorProps<DataSource, Params>) => {
     const [filterButton, filterList] = useFilterButton({
         columns,
@@ -102,9 +104,9 @@ const ProTabulator = <
                 <ProTable<DataSource, ProTabulatorRequestParams<Params>>
                     dataSource={dataSource}
                     request={request}
-                    size='small'
+                    size='middle'
                     toolbar={{
-                        title: hiddenFilter ? undefined : filterButton,
+                        title: hiddenFilter || !filterList.length ? undefined : filterButton,
                     }}
                     className='pro-tabulator'
                     tableRender={(tableProps, defaultDom, domList) => {
@@ -128,6 +130,11 @@ const ProTabulator = <
                         density: false,
                         reload: true,
                         setting: false,
+                    }}
+                    onRow={(row) => {
+                        return {
+                            onClick: () => rowClick(row),
+                        };
                     }}
                 />
             </ConfigProvider>

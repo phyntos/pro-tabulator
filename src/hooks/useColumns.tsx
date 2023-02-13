@@ -30,7 +30,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
         if (column.valueType === 'select') {
             proColumn.valueType = 'select';
             proColumn.fieldProps = {
-                mode: column.filterProps.multiple ? 'multiple' : undefined,
+                mode: column.filterProps?.multiple ? 'multiple' : undefined,
                 options: column.options as DefaultOptionType[],
             };
             proColumn.valueEnum = column.valueEnum;
