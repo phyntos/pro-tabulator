@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 import React from 'react';
-import ProTabulator, { ProTabulatorRequestParams, ProTabulatorSelectOptionType } from '../ProTabulator';
+import ProTabulator, {
+    ProTabulatorRequestParams,
+    // ProTabulatorSelectOptionType
+} from '../ProTabulator';
 
 type DevDataType = 'first' | 'second';
 
@@ -39,19 +42,17 @@ const mockData: DevData[] = [
     { name: 'fgh', date: '2045-08-01T15:30', type: 'second' },
 ];
 
-const getType = (): Promise<ProTabulatorSelectOptionType[]> =>
-    new Promise((resolve, reject) => {
-        const error = false;
-        setTimeout(
-            () =>
-                resolve([
-                    { label: 'Первый', value: 'first' },
-                    { label: 'Второй', value: 'second' },
-                ]),
-            1000,
-        );
-        if (error) reject();
-    });
+const typeOptions = [
+    { label: 'Первый', value: 'first' },
+    { label: 'Второй', value: 'second' },
+];
+
+// const getType = (): Promise<ProTabulatorSelectOptionType[]> =>
+//     new Promise((resolve, reject) => {
+//         const error = false;
+//         setTimeout(() => resolve(typeOptions), 1000);
+//         if (error) reject();
+//     });
 
 const getData = async (
     params: ProTabulatorRequestParams<DevDataFilter>,
@@ -90,28 +91,25 @@ const DevTabulator = () => {
                     {
                         dataIndex: 'name',
                         title: 'Наименование',
-                        filter: {
-                            type: 'text',
-                            fixed: true,
-                        },
+                        valueType: 'text',
+                        filterMode: 'fixed',
                         width: 200,
                     },
                     {
                         dataIndex: 'type',
                         title: 'Тип номер',
-                        filter: {
-                            type: 'select',
-                            request: getType,
+                        valueType: 'select',
+                        // filterMode: 'hidden',
+                        // request: getType,
+                        options: typeOptions,
+                        filterProps: {
                             multiple: true,
-                            // fixed: true,
                         },
                     },
                     {
                         dataIndex: 'date',
                         title: 'Дата номер',
-                        filter: {
-                            type: 'date',
-                        },
+                        valueType: 'date',
                     },
                 ]}
             />

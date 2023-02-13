@@ -9,34 +9,34 @@ import { FilterHidden } from './useFilterButton';
 const useColumns = <DataSource extends Record<string, any>, Params extends Record<string, any> = Record<string, any>>({
     columns,
     hiddenFilter,
-    filterHiddens,
+    filterList,
 }: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter'> & {
-    filterHiddens: FilterHidden[];
+    filterList: FilterHidden[];
 }) => {
     return columns.map((column) => {
-        const filterHidden = filterHiddens.find((x) => x.dataIndex === column.dataIndex);
+        const filterItem = filterList.find((x) => x.dataIndex === column.dataIndex);
         const proColumn: ProColumns<DataSource> = {
             title: column.title,
             dataIndex: column.dataIndex,
             hideInTable: column.hidden,
             width: column.width,
         };
-        const disabled = column.filter === undefined || filterHidden?.hidden === true || hiddenFilter === true;
+        const disabled = !column.valueType || !filterItem || filterItem.filterMode === 'hidden' || hiddenFilter;
 
         if (disabled) proColumn.search = false;
-        if (column.filter.type === 'text') {
+        if (column.valueType === 'text') {
             proColumn.valueType = 'text';
         }
-        if (column.filter.type === 'select') {
+        if (column.valueType === 'select') {
             proColumn.valueType = 'select';
             proColumn.fieldProps = {
-                mode: column.filter.multiple ? 'multiple' : undefined,
-                options: column.filter.options as DefaultOptionType[],
+                mode: column.filterProps.multiple ? 'multiple' : undefined,
+                options: column.options as DefaultOptionType[],
             };
-            proColumn.valueEnum = column.filter.enum;
-            proColumn.request = column.filter.request as ProFieldRequestData<any>;
+            proColumn.valueEnum = column.valueEnum;
+            proColumn.request = column.request as ProFieldRequestData<any>;
         }
-        if (column.filter.type === 'date') {
+        if (column.valueType === 'date') {
             if (!disabled) {
                 proColumn.renderFormItem = () => <DateFilter label={column.title} />;
                 proColumn.search = {

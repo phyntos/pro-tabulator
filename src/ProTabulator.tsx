@@ -20,26 +20,17 @@ export type ProTabulatorSelectOptionType = {
 type ProTabulatorPropsColumn<DataSource extends Record<string, any>> = {
     title: string;
     dataIndex: KeyOfWithString<DataSource>;
-    filter?: {
-        hidden?: boolean;
-        fixed?: boolean;
-    } & (
-        | {
-              type: 'text';
-          }
-        | {
-              type: 'select';
-              multiple?: boolean;
-              enum?: Record<string, string | number | boolean> | undefined;
-              options?: ProTabulatorSelectOptionType[];
-              request?: () => Promise<ProTabulatorSelectOptionType[]>;
-          }
-        | {
-              type: 'date';
-          }
-    );
     hidden?: boolean;
     width?: number | string;
+    request?: () => Promise<ProTabulatorSelectOptionType[]>;
+    valueEnum?: Record<string, string | number | boolean>;
+    options?: ProTabulatorSelectOptionType[];
+    valueType?: 'select' | 'text' | 'date';
+    filterMode?: 'visible' | 'hidden' | 'fixed';
+    filterProps?: {
+        multiple?: boolean;
+        dateFormat?: string;
+    };
 };
 
 export type ProTabulatorRequestParams<Params extends Record<string, any> = Record<string, any>> = Partial<Params> & {
@@ -85,14 +76,14 @@ const ProTabulator = <
     dataSource,
     request,
 }: ProTabulatorProps<DataSource, Params>) => {
-    const [filterButton, filterHiddens] = useFilterButton({
+    const [filterButton, filterList] = useFilterButton({
         columns,
         hiddenFilter,
     });
 
     const proColumns = useColumns({
         columns,
-        filterHiddens,
+        filterList,
         hiddenFilter,
     });
 
@@ -115,6 +106,7 @@ const ProTabulator = <
                     toolbar={{
                         title: hiddenFilter ? undefined : filterButton,
                     }}
+                    className='pro-tabulator'
                     tableRender={(tableProps, defaultDom, domList) => {
                         return (
                             <>

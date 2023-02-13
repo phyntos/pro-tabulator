@@ -1,3 +1,9 @@
+.tabulator-pro-table {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
 .tabulator-table-wrapper {
     flex: 1;
     min-height: 0;
@@ -11,6 +17,7 @@
 .tabulator-pro-table-list-toolbar-container {
     column-gap: 10px;
     flex-direction: row !important;
+    padding-block: 0 !important;
 }
 
 .tabulator-pro-table-list-toolbar-left {
@@ -26,8 +33,14 @@
 .tabulator-pro-table-list-toolbar-filter {
     margin-inline-end: auto !important;
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .tabulator-pro-form-light-filter-container {
     flex-wrap: nowrap !important;
+}
+
+.pro-tabulator .tabulator-table-wrapper .tabulator-table-thead > tr > th,
+.pro-tabulator .tabulator-table-wrapper .tabulator-table-thead > tr > td {
+    font-weight: normal;
 }

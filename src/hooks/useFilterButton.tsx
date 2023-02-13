@@ -6,8 +6,7 @@ import { ProTabulatorProps } from '../ProTabulator';
 export type FilterHidden = {
     dataIndex: string;
     title: string;
-    hidden: boolean;
-    fixed: boolean;
+    filterMode?: 'visible' | 'hidden' | 'fixed';
 };
 
 const useFilterButton = <
@@ -17,35 +16,38 @@ const useFilterButton = <
     columns,
     hiddenFilter,
 }: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter'>) => {
-    const [filterHiddens, setFilterHiddens] = useState<FilterHidden[]>([]);
+    const [filterList, setFilterList] = useState<FilterHidden[]>([]);
 
     useEffect(() => {
-        setFilterHiddens(
-            columns
-                .filter((column) => column.filter)
-                .map((column) => ({
-                    dataIndex: column.dataIndex,
-                    title: column.title,
-                    hidden: hiddenFilter || column.filter.hidden,
-                    fixed: column.filter.fixed,
-                })),
-        );
+        if (hiddenFilter) {
+            setFilterList([]);
+        } else {
+            setFilterList(
+                columns
+                    .filter((column) => column.valueType)
+                    .map<FilterHidden>((column) => ({
+                        dataIndex: column.dataIndex,
+                        title: column.title,
+                        filterMode: column.filterMode,
+                    })),
+            );
+        }
     }, [columns, hiddenFilter]);
 
-    const filterList = (
+    const filterContent = (
         <Space direction='vertical'>
-            {filterHiddens.map((filter) => (
+            {filterList.map((filter) => (
                 <Checkbox
                     key={filter.title}
-                    checked={!filter.hidden}
-                    disabled={filter.fixed}
+                    checked={filter.filterMode !== 'hidden'}
+                    disabled={filter.filterMode === 'fixed'}
                     onChange={(event) => {
-                        setFilterHiddens((filterHiddens) =>
-                            filterHiddens.map((column) => {
+                        setFilterList((filterHiddens) =>
+                            filterHiddens.map<FilterHidden>((column) => {
                                 if (column.dataIndex === filter.dataIndex) {
                                     return {
                                         ...column,
-                                        hidden: !event.target.checked,
+                                        filterMode: event.target.checked ? 'visible' : 'hidden',
                                     };
                                 }
                                 return column;
@@ -60,10 +62,10 @@ const useFilterButton = <
     );
 
     return [
-        <Popover key='filter-button' content={filterList} placement='bottomLeft' trigger='click'>
+        <Popover key='filter-button' content={filterContent} placement='bottomLeft' trigger='click'>
             <Button type='primary' icon={<FilterOutlined />} />
         </Popover>,
-        filterHiddens,
+        filterList,
     ] as const;
 };
 
