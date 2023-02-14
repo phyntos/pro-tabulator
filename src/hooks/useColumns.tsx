@@ -3,7 +3,7 @@ import { DefaultOptionType } from 'antd/es/select';
 import dayjs from 'dayjs';
 import React from 'react';
 import DateFilter from '../components/DateFilter';
-import { ProTabulatorProps } from '../ProTabulator';
+import { ProTabulatorProps } from '../types';
 import { FilterHidden } from './useFilterButton';
 
 const useColumns = <DataSource extends Record<string, any>, Params extends Record<string, any> = Record<string, any>>({
@@ -21,6 +21,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
             dataIndex: column.dataIndex,
             hideInTable: column.hidden,
             width: column.width,
+            sorter: column.sorter,
         };
         const disabled = !column.valueType || !filterItem || filterItem.filterMode === 'hidden' || hiddenFilter;
 

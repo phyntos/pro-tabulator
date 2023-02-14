@@ -1,7 +1,7 @@
 import { FilterOutlined } from '@ant-design/icons';
 import { Space, Checkbox, Popover, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { ProTabulatorProps } from '../ProTabulator';
+import { ProTabulatorProps } from '../types';
 
 export type FilterHidden = {
     dataIndex: string;
