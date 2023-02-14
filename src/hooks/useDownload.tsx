@@ -1,5 +1,5 @@
 import { DownloadOutlined, LoadingOutlined } from '@ant-design/icons';
-import { Dropdown, Menu, Spin, Tooltip } from 'antd';
+import { Dropdown, Spin, Tooltip } from 'antd';
 import { Excel } from 'antd-table-saveas-excel';
 import { IExcelColumn } from 'antd-table-saveas-excel/app';
 import dayjs from 'dayjs';
@@ -161,27 +161,26 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
                 : downloadAll(el.name, el.excelColumns, el.fileName),
     }));
 
-    const menu = (
-        <Menu
-            items={[
-                {
-                    label: <span>Скачать страницу</span>,
-                    key: 'downloadPage',
-                    onClick: () =>
-                        downloadDataSource(dataSource, pageInfo?.current + ' стр.', excelDownload?.excelColumns),
-                },
-                {
-                    label: <span>Скачать все</span>,
-                    key: 'downloadAll',
-                    onClick: () => downloadAll('все', excelDownload?.excelColumns),
-                },
-                ...extraMenu,
-            ]}
-        />
-    );
-
     const downloadDropdown = (
-        <Dropdown overlay={menu} trigger={['click']}>
+        <Dropdown
+            menu={{
+                items: [
+                    {
+                        label: <span>Скачать страницу</span>,
+                        key: 'downloadPage',
+                        onClick: () =>
+                            downloadDataSource(dataSource, pageInfo?.current + ' стр.', excelDownload?.excelColumns),
+                    },
+                    {
+                        label: <span>Скачать все</span>,
+                        key: 'downloadAll',
+                        onClick: () => downloadAll('все', excelDownload?.excelColumns),
+                    },
+                    ...extraMenu,
+                ],
+            }}
+            trigger={['click']}
+        >
             <Tooltip title='Скачать'>
                 <div className='pro-tabulator-pro-table-list-toolbar-setting-item'>
                     <span>

@@ -53,6 +53,7 @@ const ProTabulator = <
     const [filterButton, filterList] = useFilterButton({
         columns,
         hiddenFilter,
+        tableStorage,
     });
 
     const proColumns = useColumns({
@@ -88,11 +89,15 @@ const ProTabulator = <
         <StyleProvider hashPriority='high' transformers={[legacyLogicalPropertiesTransformer]}>
             <ConfigProvider
                 locale={ruRU}
-                theme={{
-                    token: {
-                        colorPrimary,
-                    },
-                }}
+                theme={
+                    colorPrimary
+                        ? {
+                              token: {
+                                  colorPrimary,
+                              },
+                          }
+                        : undefined
+                }
                 prefixCls='pro-tabulator'
                 iconPrefixCls='pro-tabulator-icon'
             >
@@ -116,6 +121,7 @@ const ProTabulator = <
                             total,
                         };
                     }}
+                    rowKey='id'
                     toolBarRender={(action, rows) => {
                         const toolBarRenders =
                             toolBarRender !== false && toolBarRender ? toolBarRender(action, rows) : [];

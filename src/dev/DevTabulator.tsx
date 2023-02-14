@@ -6,6 +6,7 @@ import { ProTabulatorRequestParams } from '../types';
 type DevDataType = 'first' | 'second';
 
 type DevData = {
+    id: number;
     name: string;
     date: string;
     description?: string;
@@ -21,23 +22,24 @@ type DevDataFilter = {
 
 const mockData: DevData[] = [
     {
+        id: 1,
         name: 'asd',
         date: '2014-08-01T15:30',
         description: 'Lorem ipsum dolor sit amet, consectetur adip',
         type: 'second',
     },
-    { name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
-    { name: 'fgh', date: '2015-08-01T15:30', type: 'first' },
-    { name: 'fgh', date: '2016-08-01T15:30', type: 'second' },
-    { name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
-    { name: 'asd', date: '2017-08-01T15:30', type: 'first' },
-    { name: 'afg', date: '2017-08-01T15:30', type: 'second' },
-    { name: 'fgh', date: '2018-08-01T15:30', type: 'first' },
-    { name: 'fgh', date: '2018-08-01T15:30', type: 'second' },
-    { name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
-    { name: 'fgh', date: '2019-08-01T15:30', type: 'first' },
-    { name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
-    { name: 'fgh', date: '2045-08-01T15:30', type: 'second' },
+    { id: 2, name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
+    { id: 3, name: 'fgh', date: '2015-08-01T15:30', type: 'first' },
+    { id: 4, name: 'fgh', date: '2016-08-01T15:30', type: 'second' },
+    { id: 5, name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
+    { id: 6, name: 'asd', date: '2017-08-01T15:30', type: 'first' },
+    { id: 7, name: 'afg', date: '2017-08-01T15:30', type: 'second' },
+    { id: 8, name: 'fgh', date: '2018-08-01T15:30', type: 'first' },
+    { id: 9, name: 'fgh', date: '2018-08-01T15:30', type: 'second' },
+    { id: 10, name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
+    { id: 11, name: 'fgh', date: '2019-08-01T15:30', type: 'first' },
+    { id: 12, name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
+    { id: 13, name: 'fgh', date: '2045-08-01T15:30', type: 'second' },
 ];
 
 const typeOptions = [
@@ -111,6 +113,7 @@ const DevTabulator = () => {
                     },
                     {
                         dataIndex: 'date',
+                        filterMode: 'hidden',
                         title: 'Дата номер',
                         valueType: 'date',
                     },

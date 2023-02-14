@@ -1,6 +1,7 @@
 import { FilterOutlined } from '@ant-design/icons';
 import { Space, Checkbox, Popover, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
+import TableStorage from '../services/TableStorage';
 import { ProTabulatorProps } from '../types';
 
 export type FilterHidden = {
@@ -15,24 +16,31 @@ const useFilterButton = <
 >({
     columns,
     hiddenFilter,
-}: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter'>) => {
+    tableStorage,
+}: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter'> & {
+    tableStorage: TableStorage<Params>;
+}) => {
     const [filterList, setFilterList] = useState<FilterHidden[]>([]);
 
     useEffect(() => {
         if (hiddenFilter) {
             setFilterList([]);
         } else {
+            const storageParams = tableStorage.getFormValues();
             setFilterList(
                 columns
                     .filter((column) => column.valueType)
                     .map<FilterHidden>((column) => ({
                         dataIndex: column.dataIndex,
                         title: column.title,
-                        filterMode: column.filterMode,
+                        filterMode:
+                            column.filterMode === 'hidden' && column.dataIndex in storageParams
+                                ? 'visible'
+                                : column.filterMode,
                     })),
             );
         }
-    }, [columns, hiddenFilter]);
+    }, [columns, hiddenFilter, tableStorage]);
 
     const filterContent = (
         <Space direction='vertical'>

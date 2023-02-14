@@ -17,9 +17,6 @@ const getInitialValues = <DataSource extends Record<string, any>>(
                 ];
             }
         }
-        if (columns.some((col) => key.includes(col.dataIndex as string) && col.hidden)) {
-            delete formValues[key];
-        }
     });
     return formValues;
 };
