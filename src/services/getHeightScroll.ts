@@ -11,10 +11,10 @@ const useHeightScroll = (id?: string, loading?: boolean | SpinProps) => {
         const proTabulatorSelector = `${selector}.pro-tabulator`;
         const proTabulator = document.querySelector<HTMLElement>(`${selector}.pro-tabulator`);
         const toolBar = document.querySelector<HTMLElement>(
-            `${proTabulatorSelector} .tabulator-pro-table-list-toolbar`,
+            `${proTabulatorSelector} .pro-tabulator-pro-table-list-toolbar`,
         );
-        const tableHead = document.querySelector<HTMLElement>(`${proTabulatorSelector} .tabulator-table-thead`);
-        const pagination = document.querySelector<HTMLElement>(`${proTabulatorSelector} .tabulator-pagination`);
+        const tableHead = document.querySelector<HTMLElement>(`${proTabulatorSelector} .pro-tabulator-table-thead`);
+        const pagination = document.querySelector<HTMLElement>(`${proTabulatorSelector} .pro-tabulator-pagination`);
 
         if (proTabulator && tableHead) {
             let heightScroll = proTabulator.offsetHeight;

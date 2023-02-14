@@ -1,4 +1,5 @@
 import { ActionType, ProTableProps } from '@ant-design/pro-components';
+import { OptionConfig } from '@ant-design/pro-table/es/components/ToolBar';
 import { TablePaginationConfig } from 'antd';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -77,6 +78,7 @@ export type ProTabulatorProps<
     toolBarRender?: ProTableProps<DataSource, any>['toolBarRender'];
     pagination?: false | TablePaginationConfig;
     className?: string;
+    options?: false | OptionConfig;
 } & (
     | {
           dataSource: ProTabulatorDataSource<DataSource>[];

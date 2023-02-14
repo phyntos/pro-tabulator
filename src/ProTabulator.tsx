@@ -32,6 +32,7 @@ const ProTabulator = <
     toolBarRender,
     pagination,
     className,
+    options,
 }: ProTabulatorProps<DataSource, Params>) => {
     const actionRef = useRef<ActionType>();
     const [loading, setLoading] = useState<boolean | SpinProps>();
@@ -93,8 +94,8 @@ const ProTabulator = <
                         // colorPrimary: 'blue',
                     },
                 }}
-                prefixCls='tabulator'
-                iconPrefixCls='tabulator-icon'
+                prefixCls='pro-tabulator'
+                iconPrefixCls='pro-tabulator-icon'
             >
                 <ProTable<DataSource, Params>
                     dataSource={dataSource}
@@ -148,11 +149,16 @@ const ProTabulator = <
                     search={{
                         filterType: 'light',
                     }}
-                    options={{
-                        density: false,
-                        reload: true,
-                        setting: false,
-                    }}
+                    options={
+                        options !== false
+                            ? {
+                                  density: false,
+                                  reload: true,
+                                  setting: false,
+                                  ...options,
+                              }
+                            : false
+                    }
                     dateFormatter='string'
                     onRow={(row) => {
                         return {
