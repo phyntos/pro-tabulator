@@ -1,4 +1,4 @@
-import { StyleProvider } from '@ant-design/cssinjs';
+import { StyleProvider, legacyLogicalPropertiesTransformer } from '@ant-design/cssinjs';
 import { ActionType, ProTable } from '@ant-design/pro-components';
 import { ConfigProvider, SpinProps } from 'antd';
 import ruRU from 'antd/locale/ru_RU';
@@ -86,7 +86,7 @@ const ProTabulator = <
     if (id) classNames.push(id);
 
     return (
-        <StyleProvider hashPriority='high'>
+        <StyleProvider hashPriority='high' transformers={[legacyLogicalPropertiesTransformer]}>
             <ConfigProvider
                 locale={ruRU}
                 theme={{

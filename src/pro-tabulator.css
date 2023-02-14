@@ -17,11 +17,12 @@
 .pro-tabulator-pro-table-list-toolbar-container {
     column-gap: 10px;
     flex-direction: row !important;
-    padding-block: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 .pro-tabulator-pro-table-list-toolbar-left {
-    margin-block-end: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 .pro-tabulator-pro-table-list-toolbar-right {
@@ -31,7 +32,7 @@
 }
 
 .pro-tabulator-pro-table-list-toolbar-filter {
-    margin-inline-end: auto !important;
+    margin-right: auto !important;
     overflow-x: auto;
     overflow-y: hidden;
 }
@@ -58,8 +59,7 @@
 }
 
 .pro-tabulator-pro-table-list-toolbar-setting-item {
-    margin-block: 0;
-    margin-inline: 4px;
+    margin: 0 4px;
     color: rgba(0, 0, 0, 0.88);
     font-size: 16px;
     cursor: pointer;
