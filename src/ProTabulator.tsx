@@ -1,9 +1,10 @@
 import { StyleProvider } from '@ant-design/cssinjs';
 import { ProTable } from '@ant-design/pro-components';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, SpinProps } from 'antd';
 import { SortOrder } from 'antd/es/table/interface';
 import ruRU from 'antd/locale/ru_RU';
-import React from 'react';
+import React, { useState } from 'react';
+import useHeightScroll from './functions/getHeightScroll';
 import useColumns from './hooks/useColumns';
 import useFilterButton from './hooks/useFilterButton';
 import './pro-tabulator.css';
@@ -57,6 +58,8 @@ export type ProTabulatorProps<
     columns: ProTabulatorPropsColumn<DataSource>[];
     hiddenFilter?: boolean;
     rowClick?: (row: DataSource) => void;
+    ordered?: boolean;
+    id?: string;
 } & (
     | {
           dataSource: DataSource[];
@@ -68,6 +71,8 @@ export type ProTabulatorProps<
       }
 );
 
+type ProTabulatorDataSource<T extends Record<string, any>> = T & { order?: number };
+
 const ProTabulator = <
     DataSource extends Record<string, any>,
     Params extends Record<string, any> = Record<string, any>,
@@ -77,7 +82,11 @@ const ProTabulator = <
     dataSource,
     request,
     rowClick,
-}: ProTabulatorProps<DataSource, Params>) => {
+    ordered,
+    id,
+}: ProTabulatorProps<ProTabulatorDataSource<DataSource>, Params>) => {
+    const [loading, setLoading] = useState<boolean | SpinProps>();
+    const heightScroll = useHeightScroll(id, loading);
     const [filterButton, filterList] = useFilterButton({
         columns,
         hiddenFilter,
@@ -87,6 +96,7 @@ const ProTabulator = <
         columns,
         filterList,
         hiddenFilter,
+        ordered,
     });
 
     return (
@@ -101,14 +111,38 @@ const ProTabulator = <
                 prefixCls='tabulator'
                 iconPrefixCls='tabulator-icon'
             >
-                <ProTable<DataSource, ProTabulatorRequestParams<Params>>
+                <ProTable<ProTabulatorDataSource<DataSource>, ProTabulatorRequestParams<Params>>
                     dataSource={dataSource}
-                    request={request}
+                    request={async (params, sorter) => {
+                        let response = await request(params, sorter);
+                        if (ordered) {
+                            response = {
+                                ...response,
+                                data: response.data.map((item, index) => {
+                                    item.order = ((params.current || 1) - 1) * (params.pageSize || 10) + index + 1;
+                                    return item;
+                                }),
+                            };
+                        }
+                        return response;
+                    }}
+                    pagination={{
+                        showSizeChanger: true,
+                        defaultPageSize: 10,
+                        size: 'small',
+                        defaultCurrent: 1,
+                        locale: {
+                            items_per_page: '/ записей',
+                        },
+                        showTotal: (total: number) => `Всего: ${total} записей`,
+                    }}
+                    bordered
                     size='middle'
                     toolbar={{
                         title: hiddenFilter || !filterList.length ? undefined : filterButton,
                     }}
                     className='pro-tabulator'
+                    onLoadingChange={setLoading}
                     tableRender={(tableProps, defaultDom, domList) => {
                         return (
                             <>
@@ -120,7 +154,7 @@ const ProTabulator = <
                     }}
                     scroll={{
                         x: true,
-                        y: '400px',
+                        y: heightScroll,
                     }}
                     columns={proColumns}
                     search={{

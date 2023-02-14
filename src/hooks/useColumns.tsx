@@ -10,10 +10,11 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
     columns,
     hiddenFilter,
     filterList,
-}: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter'> & {
+    ordered,
+}: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter' | 'ordered'> & {
     filterList: FilterHidden[];
 }) => {
-    return columns.map((column) => {
+    const newColumns = columns.map((column) => {
         const filterItem = filterList.find((x) => x.dataIndex === column.dataIndex);
         const proColumn: ProColumns<DataSource> = {
             title: column.title,
@@ -66,6 +67,16 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
 
         return proColumn;
     });
+
+    if (ordered)
+        newColumns.unshift({
+            title: '#',
+            dataIndex: 'order',
+            fixed: 'left',
+            width: 45,
+            hideInSearch: true,
+        });
+    return newColumns;
 };
 
 export default useColumns;

@@ -44,3 +44,15 @@
 .pro-tabulator .tabulator-table-wrapper .tabulator-table-thead > tr > td {
     font-weight: normal;
 }
+
+.pro-tabulator .tabulator-table-wrapper .tabulator-table-pagination.tabulator-pagination {
+    margin: 16px 0 0;
+}
+
+.tabulator-pro {
+    height: 100%;
+}
+
+.pro-tabulator {
+    height: 100%;
+}

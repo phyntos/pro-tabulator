@@ -82,11 +82,12 @@ const getData = async (
 
 const DevTabulator = () => {
     return (
-        <div>
+        <div style={{ height: 500 }}>
             <ProTabulator
                 // dataSource={mockData}
                 request={getData}
                 // hiddenFilter
+                ordered
                 columns={[
                     {
                         dataIndex: 'name',
