@@ -56,3 +56,14 @@
 .pro-tabulator {
     height: 100%;
 }
+
+.tabulator-pro-table-list-toolbar-setting-item {
+    margin-block: 0;
+    margin-inline: 4px;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 16px;
+    cursor: pointer;
+}
+.tabulator-pro-table-list-toolbar-setting-item:hover {
+    color: #1677ff;
+}

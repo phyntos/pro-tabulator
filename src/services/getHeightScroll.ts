@@ -6,8 +6,6 @@ const useHeightScroll = (id?: string, loading?: boolean | SpinProps) => {
     const [heightScroll, setHeightScroll] = useState<number | undefined>(undefined);
     const { height } = useWindowSize();
 
-    console.log(heightScroll);
-
     useEffect(() => {
         const selector = id ? '.' + id : '';
         const proTabulatorSelector = `${selector}.pro-tabulator`;
@@ -19,12 +17,6 @@ const useHeightScroll = (id?: string, loading?: boolean | SpinProps) => {
         const pagination = document.querySelector<HTMLElement>(`${proTabulatorSelector} .tabulator-pagination`);
 
         if (proTabulator && tableHead) {
-            console.log([
-                proTabulator?.offsetHeight,
-                toolBar?.offsetHeight,
-                tableHead?.offsetHeight,
-                pagination?.offsetHeight,
-            ]);
             let heightScroll = proTabulator.offsetHeight;
 
             if (toolBar) heightScroll -= toolBar.offsetHeight + 10;

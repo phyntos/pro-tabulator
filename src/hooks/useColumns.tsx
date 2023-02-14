@@ -22,6 +22,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
             hideInTable: column.hidden,
             width: column.width,
             sorter: column.sorter,
+            ellipsis: column.ellipsis,
         };
         const disabled = !column.valueType || !filterItem || filterItem.filterMode === 'hidden' || hiddenFilter;
 

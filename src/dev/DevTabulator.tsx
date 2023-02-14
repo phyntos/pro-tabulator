@@ -1,9 +1,7 @@
 import dayjs from 'dayjs';
 import React from 'react';
-import ProTabulator, {
-    ProTabulatorRequestParams,
-    // ProTabulatorSelectOptionType
-} from '../ProTabulator';
+import ProTabulator from '../ProTabulator';
+import { ProTabulatorRequestParams } from '../types';
 
 type DevDataType = 'first' | 'second';
 
@@ -88,6 +86,10 @@ const DevTabulator = () => {
                 request={getData}
                 // hiddenFilter
                 ordered
+                excelDownload={{
+                    fileName: 'ASD',
+                }}
+                id='TEST'
                 columns={[
                     {
                         dataIndex: 'name',

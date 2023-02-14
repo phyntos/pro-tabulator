@@ -1,5 +1,5 @@
-import { ActionType } from '@ant-design/pro-components';
-import { SortOrder } from 'antd/es/table/interface';
+import { ActionType, ProTableProps } from '@ant-design/pro-components';
+import { TablePaginationConfig } from 'antd';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type KeyOfWithString<DataSource extends Record<string, any>> = (string & {}) | Extract<keyof DataSource, string>;
@@ -12,6 +12,7 @@ export type ProTabulatorSelectOptionType = {
 
 export type ProTabulatorColumn<DataSource extends Record<string, any>> = {
     title: string;
+    excelTitle?: string;
     dataIndex: KeyOfWithString<DataSource>;
     hidden?: boolean;
     width?: number | string;
@@ -25,24 +26,32 @@ export type ProTabulatorColumn<DataSource extends Record<string, any>> = {
         multiple?: boolean;
         dateFormat?: string;
     };
+    showInExcel?: boolean;
+    excelRender?: (text: string, record: DataSource, index: number) => string | object;
+    ellipsis?: boolean;
 };
 
 export type ProTabulatorRequestParams<Params extends Record<string, any> = Record<string, any>> = Partial<Params> & {
     pageSize?: number;
     current?: number;
     keyword?: string;
+    orderBy?: string;
 };
 
 export type ProTabulatorRequest<
     DataSource extends Record<string, any>,
     Params extends Record<string, any> = Record<string, any>,
-> = (
-    params: ProTabulatorRequestParams<Params>,
-    sorter: Record<string, SortOrder>,
-) => Promise<{
+> = (params: ProTabulatorRequestParams<Params>) => Promise<{
     data: DataSource[];
     total: number;
 }>;
+
+export type AntProExcelColumn = {
+    title: any;
+    dataIndex: string | string[];
+    width?: number;
+    excelRender?: (text: any, record: any, index: number) => string | object;
+};
 
 export type ProTabulatorProps<
     DataSource extends Record<string, any>,
@@ -52,8 +61,22 @@ export type ProTabulatorProps<
     hiddenFilter?: boolean;
     rowClick?: (row: ProTabulatorDataSource<DataSource>) => void;
     ordered?: boolean;
+    actionRef?: React.MutableRefObject<ActionType | undefined>;
     id?: string;
-    actionRef?: React.Ref<ActionType | undefined>;
+    disableStorage?: boolean;
+    excelDownload?: {
+        fileName: string;
+        excelColumns?: AntProExcelColumn[];
+        extra?: {
+            name: string;
+            fileName: string;
+            excelColumns?: AntProExcelColumn[];
+            params?: ProTabulatorRequestParams<Params>;
+        }[];
+    };
+    toolBarRender?: ProTableProps<DataSource, any>['toolBarRender'];
+    pagination?: false | TablePaginationConfig;
+    className?: string;
 } & (
     | {
           dataSource: ProTabulatorDataSource<DataSource>[];
