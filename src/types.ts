@@ -79,6 +79,7 @@ export type ProTabulatorProps<
     pagination?: false | TablePaginationConfig;
     className?: string;
     options?: false | OptionConfig;
+    colorPrimary?: string;
 } & (
     | {
           dataSource: ProTabulatorDataSource<DataSource>[];

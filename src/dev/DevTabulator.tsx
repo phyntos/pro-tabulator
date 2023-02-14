@@ -69,7 +69,7 @@ const getData = async (
         data = data.filter((item) => params.type?.includes(item.type));
     }
 
-    console.log('request', JSON.parse(JSON.stringify(params)));
+    // console.log('request', JSON.parse(JSON.stringify(params)));
 
     return new Promise((resolve, reject) => {
         const error = false;

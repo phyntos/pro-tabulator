@@ -183,7 +183,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
     const downloadDropdown = (
         <Dropdown overlay={menu} trigger={['click']}>
             <Tooltip title='Скачать'>
-                <div className='tabulator-pro-table-list-toolbar-setting-item'>
+                <div className='pro-tabulator-pro-table-list-toolbar-setting-item'>
                     <span>
                         {loading ? (
                             <Spin spinning indicator={<LoadingOutlined style={{ fontSize: 16 }} spin />} />

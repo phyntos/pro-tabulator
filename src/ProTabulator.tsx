@@ -33,6 +33,7 @@ const ProTabulator = <
     pagination,
     className,
     options,
+    colorPrimary,
 }: ProTabulatorProps<DataSource, Params>) => {
     const actionRef = useRef<ActionType>();
     const [loading, setLoading] = useState<boolean | SpinProps>();
@@ -46,8 +47,6 @@ const ProTabulator = <
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [],
     );
-
-    console.log(initialValues);
 
     useImperativeHandle(propActionRef, () => actionRef.current);
 
@@ -91,7 +90,7 @@ const ProTabulator = <
                 locale={ruRU}
                 theme={{
                     token: {
-                        // colorPrimary: 'blue',
+                        colorPrimary,
                     },
                 }}
                 prefixCls='pro-tabulator'
