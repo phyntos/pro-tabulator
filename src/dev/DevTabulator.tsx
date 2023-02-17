@@ -91,6 +91,10 @@ const DevTabulator = () => {
                 excelDownload={{
                     fileName: 'ASD',
                 }}
+                pagination={{
+                    defaultPageSize: 3,
+                }}
+                disableStorage
                 id='TEST'
                 columns={[
                     {

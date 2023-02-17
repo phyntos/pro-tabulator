@@ -58,7 +58,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
             }
             proColumn.renderFormItem = (schema) =>
                 schema.isEditable ? <DateEditablePicker /> : <DateRangeFilter label={column.title} />;
-            proColumn.renderText = (text) => dayjs(text).format('DD.MM.YYYY HH:mm');
+            proColumn.render = (text) => dayjs(text as string).format('DD.MM.YYYY HH:mm');
         }
 
         return proColumn;
@@ -80,20 +80,20 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
             width: 80,
             fixed: 'right',
             render(dom, entity, index, action) {
-                const key = typeof rowKey === 'string' ? rowKey : rowKey(entity, index);
                 return (
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
                         <a
                             onClick={() => {
-                                action.startEditable(entity[key]);
+                                action.startEditable(entity[rowKey]);
                             }}
                         >
                             <EditOutlined />
                         </a>
                         <Popconfirm
                             title='Вы уверены?'
+                            placement='left'
                             onConfirm={() => {
-                                onDelete(entity[key]);
+                                onDelete(entity[rowKey]);
                             }}
                         >
                             <a>

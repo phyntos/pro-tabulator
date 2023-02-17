@@ -8,6 +8,7 @@ type TablePaginationHookArgs<DataSource extends Record<string, any>> = Pick<
     'id' | 'pagination' | 'actionRef' | 'disableStorage'
 > & {
     tableStorage: TableStorage;
+    onChange?: () => void;
 };
 
 const useTablePagination = <DataSource extends Record<string, any>>({
@@ -16,6 +17,7 @@ const useTablePagination = <DataSource extends Record<string, any>>({
     pagination,
     id,
     disableStorage,
+    onChange,
 }: TablePaginationHookArgs<DataSource>) => {
     useEffect(() => {
         if (id && pagination !== false && !disableStorage) {
@@ -24,6 +26,8 @@ const useTablePagination = <DataSource extends Record<string, any>>({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, pagination]);
+
+    if (pagination == false) return false;
 
     const defaultPagination: TablePaginationConfig = {
         showSizeChanger: true,
@@ -35,6 +39,10 @@ const useTablePagination = <DataSource extends Record<string, any>>({
         },
         showTotal: (total: number) => `Всего: ${total} записей`,
         ...pagination,
+        onChange: (page, pageSize) => {
+            pagination?.onChange?.(page, pageSize);
+            onChange?.();
+        },
     };
     return defaultPagination;
 };

@@ -47,7 +47,10 @@ export type EditableProTabulatorProps<
     DataSource extends Record<string, any>,
     Params extends Record<string, any> = Record<string, any>,
 > = ProTabulatorExtraProps<DataSource, Params> &
-    Omit<EditableProTableProps<DataSource, Params>, 'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef'> & {
+    Omit<
+        EditableProTableProps<DataSource, Params>,
+        'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef' | 'rowKey'
+    > & {
         editableProps?: {
             saveAllText?: React.ReactNode;
             createText?: React.ReactNode;
@@ -82,6 +85,7 @@ export type ProTabulatorExtraProps<
         }[];
     };
     colorPrimary?: string;
+    rowKey?: string;
 } & (
     | {
           dataSource: ProTabulatorDataSource<DataSource>[];
@@ -97,6 +101,6 @@ export type ProTabulatorProps<
     DataSource extends Record<string, any>,
     Params extends Record<string, any> = Record<string, any>,
 > = ProTabulatorExtraProps<DataSource, Params> &
-    Omit<ProTableProps<DataSource, Params>, 'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef'>;
+    Omit<ProTableProps<DataSource, Params>, 'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef' | 'rowKey'>;
 
 export type ProTabulatorDataSource<T extends Record<string, any>> = T & { order?: number };

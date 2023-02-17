@@ -60,6 +60,8 @@ const EditableProTabulator = <
 
     const [form] = ProForm.useForm();
 
+    const editableFields = ProForm.useWatch([], form);
+
     useImperativeHandle(propActionRef, () => actionRef.current);
     useImperativeHandle(propFormRef, () => formRef.current);
 
@@ -78,7 +80,7 @@ const EditableProTabulator = <
         rowKey,
         onDelete: async (id) => {
             await editableProps?.onDelete?.(id);
-            actionRef.current.reloadAndRest();
+            actionRef.current.reload();
         },
     });
 
@@ -98,11 +100,29 @@ const EditableProTabulator = <
         actionRef,
         tableStorage,
         disableStorage,
+        onChange: () => {
+            if (editableKeys.length > 0 && Object.keys(editableFields).length > 0) {
+                saveAll(editableFields);
+            }
+        },
     });
     // actionRef.current.
     const classNames = ['pro-tabulator'];
     if (className) classNames.push(className);
     if (id) classNames.push(id);
+
+    const saveAll = async (editableFields: any) => {
+        const fieldList = Object.entries<DataSource>(editableFields).map(([key, value]) => {
+            return {
+                [rowKey]: key,
+                ...value,
+            };
+        });
+        await editableProps?.onSaveMultiple?.(fieldList);
+        setEditableRowKeys((old) =>
+            old.filter((val) => !fieldList.some((field) => String(field[rowKey]) === String(val))),
+        );
+    };
 
     return (
         <StyleProvider hashPriority='high' transformers={[legacyLogicalPropertiesTransformer]}>
@@ -144,23 +164,16 @@ const EditableProTabulator = <
                     toolBarRender={(action, rows) => {
                         const toolBarRenders =
                             toolBarRender !== false && toolBarRender ? toolBarRender(action, rows) : [];
-                        if (editableKeys.length > 0)
+
+                        if (editableKeys.length > 0 && Object.keys(editableFields).length > 0)
                             toolBarRenders.push(
                                 <Button
                                     type='primary'
                                     key='saveAll'
                                     onClick={async () => {
                                         const fields = await form.validateFields();
-
-                                        const fieldList = Object.entries<DataSource>(fields).map(([key, value]) => {
-                                            return {
-                                                id: key,
-                                                ...value,
-                                            };
-                                        });
-                                        await editableProps?.onSaveMultiple?.(fieldList);
-                                        setEditableRowKeys([]);
-                                        actionRef.current.reloadAndRest();
+                                        await saveAll(fields);
+                                        actionRef.current.reload();
                                     }}
                                     icon={<SaveOutlined />}
                                 >
@@ -197,7 +210,7 @@ const EditableProTabulator = <
                         editableKeys,
                         onSave: async (rowKey, data) => {
                             await editableProps?.onSave?.(data);
-                            actionRef.current.reloadAndRest();
+                            actionRef.current.reload();
                         },
                         actionRender: (row, config, dom) => [dom.save, dom.cancel],
                         form,
