@@ -61,7 +61,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
                 (column) =>
                     typeof column.title !== 'undefined' &&
                     typeof column.dataIndex !== 'undefined' &&
-                    (typeof column.showInExcel !== 'undefined' ? column.showInExcel : !column.hidden),
+                    (typeof column.showInExcel !== 'undefined' ? column.showInExcel : !column.hideInTable),
             )
             .map((column) => ({
                 title: column.excelTitle || column.title,
@@ -163,6 +163,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
 
     const downloadDropdown = (
         <Dropdown
+            key='download'
             menu={{
                 items: [
                     {

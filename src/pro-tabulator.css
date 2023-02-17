@@ -1,9 +1,3 @@
-.pro-tabulator-pro-table {
-    display: flex;
-    flex-direction: column;
-    row-gap: 10px;
-}
-
 .pro-tabulator-table-wrapper {
     flex: 1;
     min-height: 0;
@@ -64,6 +58,14 @@
     font-size: 16px;
     cursor: pointer;
 }
+
+.pro-tabulator .pro-tabulator-pro-card-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
 .pro-tabulator-pro-table-list-toolbar-setting-item:hover {
     color: #1677ff;
 }

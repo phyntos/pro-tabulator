@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import React from 'react';
-import ProTabulator from '../ProTabulator';
+import EditableProTabulator from '../EditableProTabulator';
 import { ProTabulatorRequestParams } from '../types';
 
 type DevDataType = 'first' | 'second';
@@ -83,7 +83,7 @@ const getData = async (
 const DevTabulator = () => {
     return (
         <div style={{ height: 500 }}>
-            <ProTabulator
+            <EditableProTabulator<DevData, DevDataFilter>
                 // dataSource={mockData}
                 request={getData}
                 // hiddenFilter
@@ -97,7 +97,7 @@ const DevTabulator = () => {
                         dataIndex: 'name',
                         title: 'Наименование',
                         valueType: 'text',
-                        filterMode: 'fixed',
+                        searchState: 'fixed',
                         width: 200,
                     },
                     {
@@ -106,18 +106,41 @@ const DevTabulator = () => {
                         valueType: 'select',
                         // filterMode: 'hidden',
                         // request: getType,
-                        options: typeOptions,
-                        filterProps: {
-                            multiple: true,
+                        fieldProps: (form, schema) => ({
+                            mode: schema.isEditable ? undefined : 'multiple',
+                            showSearch: schema.isEditable,
+                            onChange: (value: string) => {
+                                if (schema.rowKey) form.setFieldValue([schema.rowKey, 'name'], value);
+                            },
+                        }),
+                        width: 500,
+                        render: (dom, record) => (
+                            <>
+                                {dom} - {record.name}
+                            </>
+                        ),
+                        request: async (params) => {
+                            return typeOptions.concat({ label: params.keyWords, value: params.keyWords || 'CODE' });
                         },
                     },
                     {
                         dataIndex: 'date',
-                        filterMode: 'hidden',
                         title: 'Дата номер',
-                        valueType: 'date',
+                        valueType: 'dateApartRange',
+                        searchState: 'hidden',
                     },
                 ]}
+                editableProps={{
+                    onSaveMultiple: async (data) => {
+                        console.log(data);
+                    },
+                    onSave: async (data) => {
+                        console.log(data);
+                    },
+                    onDelete: async (data) => {
+                        console.log(data);
+                    },
+                }}
             />
         </div>
     );

@@ -1,6 +1,6 @@
-import { ActionType, ProTableProps } from '@ant-design/pro-components';
-import { OptionConfig } from '@ant-design/pro-table/es/components/ToolBar';
-import { TablePaginationConfig } from 'antd';
+import { ActionType, ProColumns, ProTableProps } from '@ant-design/pro-components';
+import { EditableProTableProps } from '@ant-design/pro-table/es/components/EditableTable';
+import { FormInstance } from 'antd';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type KeyOfWithString<DataSource extends Record<string, any>> = (string & {}) | Extract<keyof DataSource, string>;
@@ -13,24 +13,13 @@ export type ProTabulatorSelectOptionType = {
 
 export type ProTabulatorColumn<DataSource extends Record<string, any>> = {
     title: string;
-    excelTitle?: string;
     dataIndex: KeyOfWithString<DataSource>;
-    hidden?: boolean;
-    width?: number | string;
-    request?: () => Promise<ProTabulatorSelectOptionType[]>;
-    valueEnum?: Record<string, string | number | boolean>;
-    options?: ProTabulatorSelectOptionType[];
-    valueType?: 'select' | 'text' | 'date';
-    sorter?: boolean;
-    filterMode?: 'visible' | 'hidden' | 'fixed';
-    filterProps?: {
-        multiple?: boolean;
-        dateFormat?: string;
-    };
+    searchState?: 'visible' | 'hidden' | 'fixed';
+    excelTitle?: string;
     showInExcel?: boolean;
     excelRender?: (text: string, record: DataSource, index: number) => string | object;
-    ellipsis?: boolean;
-};
+    valueType?: ProColumns<DataSource>['valueType'] | 'dateApartRange';
+} & Omit<ProColumns<DataSource>, 'hideInSearch' | 'dataIndex' | 'title' | 'filterMode' | 'valueType'>;
 
 export type ProTabulatorRequestParams<Params extends Record<string, any> = Record<string, any>> = Partial<Params> & {
     pageSize?: number;
@@ -54,7 +43,22 @@ export type AntProExcelColumn = {
     excelRender?: (text: any, record: any, index: number) => string | object;
 };
 
-export type ProTabulatorProps<
+export type EditableProTabulatorProps<
+    DataSource extends Record<string, any>,
+    Params extends Record<string, any> = Record<string, any>,
+> = ProTabulatorExtraProps<DataSource, Params> &
+    Omit<EditableProTableProps<DataSource, Params>, 'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef'> & {
+        editableProps?: {
+            saveAllText?: React.ReactNode;
+            createText?: React.ReactNode;
+            onSave?: (data: DataSource) => Promise<void>;
+            onSaveMultiple?: (data: DataSource[]) => Promise<void>;
+            onDelete?: (id: string) => Promise<void>;
+            onCreate?: () => Promise<void>;
+        };
+    };
+
+export type ProTabulatorExtraProps<
     DataSource extends Record<string, any>,
     Params extends Record<string, any> = Record<string, any>,
 > = {
@@ -63,8 +67,10 @@ export type ProTabulatorProps<
     rowClick?: (row: ProTabulatorDataSource<DataSource>) => void;
     ordered?: boolean;
     actionRef?: React.MutableRefObject<ActionType | undefined>;
+    formRef?: React.MutableRefObject<FormInstance<any>>;
     id?: string;
     disableStorage?: boolean;
+    disableHeightScroll?: boolean;
     excelDownload?: {
         fileName: string;
         excelColumns?: AntProExcelColumn[];
@@ -75,10 +81,6 @@ export type ProTabulatorProps<
             params?: ProTabulatorRequestParams<Params>;
         }[];
     };
-    toolBarRender?: ProTableProps<DataSource, any>['toolBarRender'];
-    pagination?: false | TablePaginationConfig;
-    className?: string;
-    options?: false | OptionConfig;
     colorPrimary?: string;
 } & (
     | {
@@ -90,5 +92,11 @@ export type ProTabulatorProps<
           request: ProTabulatorRequest<ProTabulatorDataSource<DataSource>, Params>;
       }
 );
+
+export type ProTabulatorProps<
+    DataSource extends Record<string, any>,
+    Params extends Record<string, any> = Record<string, any>,
+> = ProTabulatorExtraProps<DataSource, Params> &
+    Omit<ProTableProps<DataSource, Params>, 'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef'>;
 
 export type ProTabulatorDataSource<T extends Record<string, any>> = T & { order?: number };

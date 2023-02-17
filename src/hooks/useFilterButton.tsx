@@ -34,9 +34,9 @@ const useFilterButton = <
                         dataIndex: column.dataIndex,
                         title: column.title,
                         filterMode:
-                            column.filterMode === 'hidden' && column.dataIndex in storageParams
+                            column.searchState === 'hidden' && column.dataIndex in storageParams
                                 ? 'visible'
-                                : column.filterMode,
+                                : column.searchState,
                     })),
             );
         }

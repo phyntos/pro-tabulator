@@ -1,6 +1,7 @@
 import { legacyLogicalPropertiesTransformer, StyleProvider } from '@ant-design/cssinjs';
-import { ActionType, ProTable } from '@ant-design/pro-components';
-import { ConfigProvider, FormInstance, SpinProps } from 'antd';
+import { PlusOutlined, RollbackOutlined, SaveOutlined } from '@ant-design/icons';
+import { ActionType, EditableProTable, ProForm } from '@ant-design/pro-components';
+import { Button, ConfigProvider, FormInstance, SpinProps } from 'antd';
 import ruRU from 'antd/locale/ru_RU';
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
 import useColumns from './hooks/useColumns';
@@ -13,9 +14,9 @@ import getInitialValues from './services/getInitialValues';
 import getOrderedData from './services/getOrderedData';
 import getRequestParams from './services/getRequestParams';
 import TableStorage from './services/TableStorage';
-import { ProTabulatorProps } from './types';
+import { EditableProTabulatorProps } from './types';
 
-const ProTabulator = <
+const EditableProTabulator = <
     DataSource extends Record<string, any>,
     Params extends Record<string, any> = Record<string, any>,
 >({
@@ -36,9 +37,13 @@ const ProTabulator = <
     options,
     colorPrimary,
     disableHeightScroll,
+    editableProps,
+    onLoadingChange,
     rowKey = 'id',
+    editable,
     ...props
-}: ProTabulatorProps<DataSource, Params>) => {
+}: EditableProTabulatorProps<DataSource, Params>) => {
+    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
     const actionRef = useRef<ActionType>();
     const formRef = useRef<FormInstance<any>>();
     const [loading, setLoading] = useState<boolean | SpinProps>();
@@ -52,6 +57,8 @@ const ProTabulator = <
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [],
     );
+
+    const [form] = ProForm.useForm();
 
     useImperativeHandle(propActionRef, () => actionRef.current);
     useImperativeHandle(propFormRef, () => formRef.current);
@@ -67,7 +74,12 @@ const ProTabulator = <
         filterList,
         hiddenFilter,
         ordered,
+        editable: true,
         rowKey,
+        onDelete: async (id) => {
+            await editableProps?.onDelete?.(id);
+            actionRef.current.reloadAndRest();
+        },
     });
 
     const { downloadRender, onDataSourceChange } = useDownload({
@@ -108,7 +120,7 @@ const ProTabulator = <
                 prefixCls='pro-tabulator'
                 iconPrefixCls='pro-tabulator-icon'
             >
-                <ProTable<DataSource, Params>
+                <EditableProTable<DataSource, Params>
                     dataSource={dataSource}
                     actionRef={actionRef}
                     request={async (params, sorter) => {
@@ -132,7 +144,44 @@ const ProTabulator = <
                     toolBarRender={(action, rows) => {
                         const toolBarRenders =
                             toolBarRender !== false && toolBarRender ? toolBarRender(action, rows) : [];
-                        return toolBarRenders.concat(downloadRender);
+                        if (editableKeys.length > 0)
+                            toolBarRenders.push(
+                                <Button
+                                    type='primary'
+                                    key='saveAll'
+                                    onClick={async () => {
+                                        const fields = await form.validateFields();
+
+                                        const fieldList = Object.entries<DataSource>(fields).map(([key, value]) => {
+                                            return {
+                                                id: key,
+                                                ...value,
+                                            };
+                                        });
+                                        await editableProps?.onSaveMultiple?.(fieldList);
+                                        actionRef.current.reloadAndRest();
+                                    }}
+                                    icon={<SaveOutlined />}
+                                >
+                                    {editableProps?.saveAllText || 'Сохранить все'}
+                                </Button>,
+                            );
+                        toolBarRenders.push(
+                            <Button
+                                key='create'
+                                type='primary'
+                                onClick={async () => {
+                                    await editableProps?.onCreate?.();
+                                    actionRef.current.reloadAndRest();
+                                }}
+                                icon={<PlusOutlined />}
+                            >
+                                {editableProps?.createText || 'Добавить'}
+                            </Button>,
+                        );
+
+                        toolBarRenders.push(downloadRender);
+                        return toolBarRenders;
                     }}
                     form={{ initialValues }}
                     onDataSourceChange={onDataSourceChange}
@@ -142,8 +191,26 @@ const ProTabulator = <
                     toolbar={{
                         title: hiddenFilter || !filterList.length ? undefined : filterButton,
                     }}
+                    editable={{
+                        type: 'multiple',
+                        editableKeys,
+                        onSave: async (rowKey, data) => {
+                            await editableProps?.onSave?.(data);
+                            actionRef.current.reloadAndRest();
+                        },
+                        actionRender: (row, config, dom) => [dom.save, dom.cancel],
+                        form,
+                        onChange: setEditableRowKeys,
+                        saveText: <SaveOutlined />,
+                        cancelText: <RollbackOutlined />,
+                        ...editable,
+                    }}
+                    recordCreatorProps={false}
                     className={classNames.join(' ')}
-                    onLoadingChange={setLoading}
+                    onLoadingChange={(loading) => {
+                        setLoading(loading);
+                        onLoadingChange?.(loading);
+                    }}
                     scroll={{
                         x: true,
                         y: disableHeightScroll ? undefined : heightScroll,
@@ -178,4 +245,4 @@ const ProTabulator = <
     );
 };
 
-export default ProTabulator;
+export default EditableProTabulator;

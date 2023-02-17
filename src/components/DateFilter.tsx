@@ -2,7 +2,7 @@ import { Space, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 
-const DateFilter = ({
+export const DateRangeFilter = ({
     value,
     onChange,
     label,
@@ -45,4 +45,27 @@ const DateFilter = ({
     );
 };
 
-export default DateFilter;
+export const DateEditablePicker = ({
+    value,
+    onChange,
+}: {
+    value?: string | dayjs.Dayjs;
+    onChange?: (value: dayjs.Dayjs) => void;
+}) => {
+    return (
+        <DatePicker
+            showTime={{
+                showSecond: false,
+            }}
+            value={
+                typeof value === 'string'
+                    ? dayjs(value, value.includes('T') ? 'YYYY-MM-DDTHH:mm' : 'DD.MM.YYYY HH:mm')
+                    : value || null
+            }
+            onChange={(date) => {
+                onChange(date);
+            }}
+            format={(date) => date.format('DD.MM.YYYY HH:mm')}
+        />
+    );
+};

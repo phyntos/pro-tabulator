@@ -1,8 +1,9 @@
-import { ProColumns, ProFieldRequestData } from '@ant-design/pro-components';
-import { DefaultOptionType } from 'antd/es/select';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { ProColumns } from '@ant-design/pro-components';
+import { Popconfirm } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
-import DateFilter from '../components/DateFilter';
+import { DateEditablePicker, DateRangeFilter } from '../components/DateFilter';
 import { ProTabulatorProps } from '../types';
 import { FilterHidden } from './useFilterButton';
 
@@ -10,38 +11,26 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
     columns,
     hiddenFilter,
     filterList,
+    editable,
     ordered,
-}: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter' | 'ordered'> & {
+    rowKey,
+    onDelete,
+}: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter' | 'ordered' | 'rowKey'> & {
     filterList: FilterHidden[];
+    editable?: boolean;
+    onDelete?: (id: string) => Promise<void>;
 }) => {
     const newColumns = columns.map((column) => {
         const filterItem = filterList.find((x) => x.dataIndex === column.dataIndex);
         const proColumn: ProColumns<DataSource> = {
-            title: column.title,
-            dataIndex: column.dataIndex,
-            hideInTable: column.hidden,
-            width: column.width,
-            sorter: column.sorter,
-            ellipsis: column.ellipsis,
+            ...column,
+            valueType: column.valueType === 'dateApartRange' ? undefined : column.valueType,
         };
         const disabled = !column.valueType || !filterItem || filterItem.filterMode === 'hidden' || hiddenFilter;
 
         if (disabled) proColumn.search = false;
-        if (column.valueType === 'text') {
-            proColumn.valueType = 'text';
-        }
-        if (column.valueType === 'select') {
-            proColumn.valueType = 'select';
-            proColumn.fieldProps = {
-                mode: column.filterProps?.multiple ? 'multiple' : undefined,
-                options: column.options as DefaultOptionType[],
-            };
-            proColumn.valueEnum = column.valueEnum;
-            proColumn.request = column.request as ProFieldRequestData<any>;
-        }
-        if (column.valueType === 'date') {
+        if (column.valueType === 'dateApartRange') {
             if (!disabled) {
-                proColumn.renderFormItem = () => <DateFilter label={column.title} />;
                 proColumn.search = {
                     transform: (value, name) => {
                         return {
@@ -64,6 +53,8 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                     },
                 };
             }
+            proColumn.renderFormItem = (schema) =>
+                schema.isEditable ? <DateEditablePicker /> : <DateRangeFilter label={column.title} />;
             proColumn.renderText = (text) => dayjs(text).format('DD.MM.YYYY HH:mm');
         }
 
@@ -77,6 +68,38 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
             fixed: 'left',
             width: 45,
             hideInSearch: true,
+            editable: false,
+        });
+    if (editable)
+        newColumns.push({
+            title: 'Действия',
+            valueType: 'option',
+            width: 80,
+            fixed: 'right',
+            render(dom, entity, index, action) {
+                const key = typeof rowKey === 'string' ? rowKey : rowKey(entity, index);
+                return (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                        <a
+                            onClick={() => {
+                                action.startEditable(entity[key]);
+                            }}
+                        >
+                            <EditOutlined />
+                        </a>
+                        <Popconfirm
+                            title='Вы уверены?'
+                            onConfirm={() => {
+                                onDelete(entity[key]);
+                            }}
+                        >
+                            <a>
+                                <DeleteOutlined />
+                            </a>
+                        </Popconfirm>
+                    </div>
+                );
+            },
         });
     return newColumns;
 };
