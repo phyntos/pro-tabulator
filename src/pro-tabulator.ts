@@ -1,3 +1,4 @@
 import ProTabulator from './ProTabulator';
+import EditableProTabulator from './EditableProTabulator';
 
-export { ProTabulator };
+export { ProTabulator, EditableProTabulator };
