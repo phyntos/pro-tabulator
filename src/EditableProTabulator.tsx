@@ -159,6 +159,7 @@ const EditableProTabulator = <
                                             };
                                         });
                                         await editableProps?.onSaveMultiple?.(fieldList);
+                                        setEditableRowKeys([]);
                                         actionRef.current.reloadAndRest();
                                     }}
                                     icon={<SaveOutlined />}

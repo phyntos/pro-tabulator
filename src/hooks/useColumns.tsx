@@ -39,19 +39,22 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                         };
                     },
                 };
-                proColumn.formItemProps = {
-                    lightProps: {
-                        labelFormatter: (value) => {
-                            const before = value[0] || undefined;
-                            const after = value[1] || undefined;
-                            let label = '';
-                            if (before) label += 'c ' + before.format('DD.MM.YYYY');
-                            if (before && after) label += ' ';
-                            if (after) label += 'по ' + after.format('DD.MM.YYYY');
-                            return label;
-                        },
-                    },
-                };
+                proColumn.formItemProps = (form, schema) =>
+                    !schema.isEditable
+                        ? {
+                              lightProps: {
+                                  labelFormatter: (value) => {
+                                      const before = value[0] || undefined;
+                                      const after = value[1] || undefined;
+                                      let label = '';
+                                      if (before) label += 'c ' + before.format('DD.MM.YYYY');
+                                      if (before && after) label += ' ';
+                                      if (after) label += 'по ' + after.format('DD.MM.YYYY');
+                                      return label;
+                                  },
+                              },
+                          }
+                        : {};
             }
             proColumn.renderFormItem = (schema) =>
                 schema.isEditable ? <DateEditablePicker /> : <DateRangeFilter label={column.title} />;
