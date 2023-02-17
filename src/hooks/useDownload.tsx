@@ -16,14 +16,9 @@ type TableDownloadHookArgs<
     Params extends Record<string, any> = Record<string, any>,
 > = Pick<
     ProTabulatorProps<DataSource, Params>,
-    'columns' | 'excelDownload' | 'id' | 'actionRef' | 'request' | 'ordered'
+    'columns' | 'downloadProps' | 'id' | 'actionRef' | 'request' | 'ordered'
 > & {
     tableStorage: TableStorage<Params>;
-};
-
-type TableDownloadHookReturn<DataSource> = {
-    downloadRender: null | JSX.Element | (JSX.Element | null)[];
-    onDataSourceChange?: (dataSource: DataSource[]) => void;
 };
 
 const excelTextRender =
@@ -42,14 +37,14 @@ const excelTextRender =
     };
 
 const useDownload = <DataSource extends Record<string, any>, Params extends Record<string, any> = Record<string, any>>({
-    excelDownload,
+    downloadProps,
     columns,
     actionRef,
     request,
     id,
     ordered,
     tableStorage,
-}: TableDownloadHookArgs<DataSource, Params>): TableDownloadHookReturn<DataSource> => {
+}: TableDownloadHookArgs<DataSource, Params>) => {
     const [dataSource, setDataSource] = useState<DataSource[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -84,7 +79,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
         excelFileName?: string,
     ) => {
         const excel = new Excel();
-        const fileName = excelFileName || excelDownload?.fileName || 'Excel';
+        const fileName = excelFileName || downloadProps?.fileName || 'Excel';
 
         const columns =
             !excelColumns || excelColumns.length === 0
@@ -152,7 +147,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
         }
     };
 
-    const extraMenu = (excelDownload?.extra || []).map((el) => ({
+    const extraMenu = (downloadProps?.extra || []).map((el) => ({
         label: 'Скачать ' + el.name,
         key: el.name,
         onClick: () =>
@@ -170,12 +165,12 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
                         label: <span>Скачать страницу</span>,
                         key: 'downloadPage',
                         onClick: () =>
-                            downloadDataSource(dataSource, pageInfo?.current + ' стр.', excelDownload?.excelColumns),
+                            downloadDataSource(dataSource, pageInfo?.current + ' стр.', downloadProps?.excelColumns),
                     },
                     {
                         label: <span>Скачать все</span>,
                         key: 'downloadAll',
-                        onClick: () => downloadAll('все', excelDownload?.excelColumns),
+                        onClick: () => downloadAll('все', downloadProps?.excelColumns),
                     },
                     ...extraMenu,
                 ],
@@ -196,7 +191,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
         </Dropdown>
     );
 
-    if (typeof excelDownload === 'undefined' || !id)
+    if (typeof downloadProps === 'undefined' || !id)
         return {
             onDataSourceChange: undefined,
             downloadRender: [],

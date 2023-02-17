@@ -8,6 +8,7 @@ import useColumns from './hooks/useColumns';
 import useDownload from './hooks/useDownload';
 import useFilterButton from './hooks/useFilterButton';
 import useTablePagination from './hooks/useTablePagination';
+import useUpload from './hooks/useUpload';
 import './pro-tabulator.css';
 import useHeightScroll from './services/getHeightScroll';
 import getInitialValues from './services/getInitialValues';
@@ -29,7 +30,7 @@ const EditableProTabulator = <
     id,
     actionRef: propActionRef,
     formRef: propFormRef,
-    excelDownload,
+    downloadProps,
     disableStorage,
     toolBarRender,
     pagination,
@@ -41,6 +42,7 @@ const EditableProTabulator = <
     onLoadingChange,
     rowKey = 'id',
     editable,
+    uploadProps,
     ...props
 }: EditableProTabulatorProps<DataSource, Params>) => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
@@ -87,12 +89,14 @@ const EditableProTabulator = <
     const { downloadRender, onDataSourceChange } = useDownload({
         columns,
         actionRef,
-        excelDownload,
+        downloadProps,
         id,
         ordered,
         request,
         tableStorage,
     });
+
+    const { uploadRender } = useUpload<DataSource>({ uploadProps, columns, actionRef });
 
     const defaultPagination = useTablePagination<DataSource>({
         id,
@@ -194,6 +198,7 @@ const EditableProTabulator = <
                             </Button>,
                         );
 
+                        toolBarRenders.push(uploadRender);
                         toolBarRenders.push(downloadRender);
                         return toolBarRenders;
                     }}

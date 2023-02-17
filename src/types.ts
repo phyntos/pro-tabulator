@@ -19,6 +19,7 @@ export type ProTabulatorColumn<DataSource extends Record<string, any>> = {
     showInExcel?: boolean;
     excelRender?: (text: string, record: DataSource, index: number) => string | object;
     valueType?: ProColumns<DataSource>['valueType'] | 'dateApartRange';
+    useForUpload?: boolean;
 } & Omit<ProColumns<DataSource>, 'hideInSearch' | 'dataIndex' | 'title' | 'filterMode' | 'valueType'>;
 
 export type ProTabulatorRequestParams<Params extends Record<string, any> = Record<string, any>> = Partial<Params> & {
@@ -36,11 +37,16 @@ export type ProTabulatorRequest<
     total: number;
 }>;
 
-export type AntProExcelColumn = {
+export type DownloadColumn = {
     title: any;
     dataIndex: string | string[];
     width?: number;
     excelRender?: (text: any, record: any, index: number) => string | object;
+};
+
+export type UploadColumn = {
+    title: string;
+    dataIndex: string;
 };
 
 export type EditableProTabulatorProps<
@@ -74,15 +80,19 @@ export type ProTabulatorExtraProps<
     id?: string;
     disableStorage?: boolean;
     disableHeightScroll?: boolean;
-    excelDownload?: {
+    downloadProps?: {
         fileName: string;
-        excelColumns?: AntProExcelColumn[];
+        excelColumns?: DownloadColumn[];
         extra?: {
             name: string;
             fileName: string;
-            excelColumns?: AntProExcelColumn[];
+            excelColumns?: DownloadColumn[];
             params?: ProTabulatorRequestParams<Params>;
         }[];
+    };
+    uploadProps?: {
+        columns?: UploadColumn[];
+        onUpload: (data: DataSource[]) => Promise<void>;
     };
     colorPrimary?: string;
     rowKey?: string;

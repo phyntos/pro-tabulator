@@ -7,6 +7,7 @@ import useColumns from './hooks/useColumns';
 import useDownload from './hooks/useDownload';
 import useFilterButton from './hooks/useFilterButton';
 import useTablePagination from './hooks/useTablePagination';
+import useUpload from './hooks/useUpload';
 import './pro-tabulator.css';
 import useHeightScroll from './services/getHeightScroll';
 import getInitialValues from './services/getInitialValues';
@@ -28,7 +29,7 @@ const ProTabulator = <
     id,
     actionRef: propActionRef,
     formRef: propFormRef,
-    excelDownload,
+    downloadProps,
     disableStorage,
     toolBarRender,
     pagination,
@@ -36,7 +37,9 @@ const ProTabulator = <
     options,
     colorPrimary,
     disableHeightScroll,
+    onLoadingChange,
     rowKey = 'id',
+    uploadProps,
     ...props
 }: ProTabulatorProps<DataSource, Params>) => {
     const actionRef = useRef<ActionType>();
@@ -73,12 +76,14 @@ const ProTabulator = <
     const { downloadRender, onDataSourceChange } = useDownload({
         columns,
         actionRef,
-        excelDownload,
+        downloadProps,
         id,
         ordered,
         request,
         tableStorage,
     });
+
+    const { uploadRender } = useUpload<DataSource>({ uploadProps, columns, actionRef });
 
     const defaultPagination = useTablePagination<DataSource>({
         id,
@@ -132,7 +137,7 @@ const ProTabulator = <
                     toolBarRender={(action, rows) => {
                         const toolBarRenders =
                             toolBarRender !== false && toolBarRender ? toolBarRender(action, rows) : [];
-                        return toolBarRenders.concat(downloadRender);
+                        return toolBarRenders.concat([...downloadRender, ...uploadRender]);
                     }}
                     form={{ initialValues }}
                     onDataSourceChange={onDataSourceChange}
@@ -143,7 +148,10 @@ const ProTabulator = <
                         title: hiddenFilter || !filterList.length ? undefined : filterButton,
                     }}
                     className={classNames.join(' ')}
-                    onLoadingChange={setLoading}
+                    onLoadingChange={(loading) => {
+                        setLoading(loading);
+                        onLoadingChange?.(loading);
+                    }}
                     scroll={{
                         x: true,
                         y: disableHeightScroll ? undefined : heightScroll,

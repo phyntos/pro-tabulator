@@ -88,7 +88,7 @@ const DevTabulator = () => {
                 request={getData}
                 // hiddenFilter
                 ordered
-                excelDownload={{
+                downloadProps={{
                     fileName: 'ASD',
                 }}
                 pagination={{
@@ -96,6 +96,22 @@ const DevTabulator = () => {
                 }}
                 disableStorage
                 id='TEST'
+                uploadProps={{
+                    columns: [
+                        {
+                            dataIndex: 'name',
+                            title: 'Наименование',
+                        },
+                        {
+                            dataIndex: 'type',
+                            title: 'Тип номер',
+                        },
+                    ],
+                    onUpload: async (data) => {
+                        await getData({});
+                        console.log(data);
+                    },
+                }}
                 columns={[
                     {
                         dataIndex: 'name',
