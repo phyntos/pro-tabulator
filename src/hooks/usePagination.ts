@@ -11,7 +11,7 @@ type TablePaginationHookArgs<DataSource extends Record<string, any>> = Pick<
     onChange?: () => void;
 };
 
-const useTablePagination = <DataSource extends Record<string, any>>({
+const usePagination = <DataSource extends Record<string, any>>({
     tableStorage,
     actionRef,
     pagination,
@@ -47,4 +47,4 @@ const useTablePagination = <DataSource extends Record<string, any>>({
     return defaultPagination;
 };
 
-export default useTablePagination;
+export default usePagination;

@@ -1,12 +1,11 @@
-import { legacyLogicalPropertiesTransformer, StyleProvider } from '@ant-design/cssinjs';
 import { ActionType, ProTable } from '@ant-design/pro-components';
-import { ConfigProvider, FormInstance, SpinProps } from 'antd';
-import ruRU from 'antd/locale/ru_RU';
+import { FormInstance, SpinProps } from 'antd';
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
+import ProTabulatorProvider from './components/ProTabulatorProvider';
 import useColumns from './hooks/useColumns';
 import useDownload from './hooks/useDownload';
 import useFilterButton from './hooks/useFilterButton';
-import useTablePagination from './hooks/useTablePagination';
+import usePagination from './hooks/usePagination';
 import useUpload from './hooks/useUpload';
 import './pro-tabulator.css';
 import useHeightScroll from './services/getHeightScroll';
@@ -85,7 +84,7 @@ const ProTabulator = <
 
     const { uploadRender } = useUpload<DataSource>({ uploadProps, columns, actionRef });
 
-    const defaultPagination = useTablePagination<DataSource>({
+    const defaultPagination = usePagination<DataSource>({
         id,
         pagination,
         actionRef,
@@ -98,91 +97,75 @@ const ProTabulator = <
     if (id) classNames.push(id);
 
     return (
-        <StyleProvider hashPriority='high' transformers={[legacyLogicalPropertiesTransformer]}>
-            <ConfigProvider
-                locale={ruRU}
-                theme={
-                    colorPrimary
-                        ? {
-                              token: {
-                                  colorPrimary,
-                              },
-                          }
-                        : undefined
-                }
-                prefixCls='pro-tabulator'
-                iconPrefixCls='pro-tabulator-icon'
-            >
-                <ProTable<DataSource, Params>
-                    dataSource={dataSource}
-                    actionRef={actionRef}
-                    request={async (params, sorter) => {
-                        const requestParams = getRequestParams<Params>(params, sorter);
-                        if (tableStorage && !disableStorage) {
-                            tableStorage.setParams(requestParams);
-                        }
-                        const response = await request(requestParams);
-                        const { total } = response;
-                        let { data } = response;
-                        if (total && tableStorage && !disableStorage) tableStorage.setTotal(total);
-                        if (ordered) {
-                            data = getOrderedData(data, params.current, params.pageSize);
-                        }
-                        return {
-                            data,
-                            total,
-                        };
-                    }}
-                    rowKey={rowKey}
-                    toolBarRender={(action, rows) => {
-                        const toolBarRenders =
-                            toolBarRender !== false && toolBarRender ? toolBarRender(action, rows) : [];
-                        return toolBarRenders.concat([...downloadRender, ...uploadRender]);
-                    }}
-                    form={{ initialValues }}
-                    onDataSourceChange={onDataSourceChange}
-                    pagination={defaultPagination}
-                    bordered
-                    size='middle'
-                    toolbar={{
-                        title: hiddenFilter || !filterList.length ? undefined : filterButton,
-                    }}
-                    className={classNames.join(' ')}
-                    onLoadingChange={(loading) => {
-                        setLoading(loading);
-                        onLoadingChange?.(loading);
-                    }}
-                    scroll={{
-                        x: true,
-                        y: disableHeightScroll ? undefined : heightScroll,
-                    }}
-                    columns={proColumns}
-                    search={{
-                        filterType: 'light',
-                    }}
-                    options={
-                        options !== false
-                            ? {
-                                  density: false,
-                                  reload: true,
-                                  setting: false,
-                                  ...options,
-                              }
-                            : false
+        <ProTabulatorProvider colorPrimary={colorPrimary}>
+            <ProTable<DataSource, Params>
+                dataSource={dataSource}
+                actionRef={actionRef}
+                request={async (params, sorter) => {
+                    const requestParams = getRequestParams<Params>(params, sorter);
+                    if (tableStorage && !disableStorage) {
+                        tableStorage.setParams(requestParams);
                     }
-                    dateFormatter='string'
-                    onRow={(row) => {
-                        return {
-                            onClick: () => rowClick?.(row),
-                            style: {
-                                cursor: rowClick ? 'pointer' : undefined,
-                            },
-                        };
-                    }}
-                    {...props}
-                />
-            </ConfigProvider>
-        </StyleProvider>
+                    const response = await request(requestParams);
+                    const { total } = response;
+                    let { data } = response;
+                    if (total && tableStorage && !disableStorage) tableStorage.setTotal(total);
+                    if (ordered) {
+                        data = getOrderedData(data, params.current, params.pageSize);
+                    }
+                    return {
+                        data,
+                        total,
+                    };
+                }}
+                rowKey={rowKey}
+                toolBarRender={(action, rows) => {
+                    const toolBarRenders = toolBarRender !== false && toolBarRender ? toolBarRender(action, rows) : [];
+                    return toolBarRenders.concat([...downloadRender, ...uploadRender]);
+                }}
+                form={{ initialValues }}
+                onDataSourceChange={onDataSourceChange}
+                pagination={defaultPagination}
+                bordered
+                size='middle'
+                toolbar={{
+                    title: hiddenFilter || !filterList.length ? undefined : filterButton,
+                }}
+                className={classNames.join(' ')}
+                onLoadingChange={(loading) => {
+                    setLoading(loading);
+                    onLoadingChange?.(loading);
+                }}
+                scroll={{
+                    x: true,
+                    y: disableHeightScroll ? undefined : heightScroll,
+                }}
+                columns={proColumns}
+                search={{
+                    filterType: 'light',
+                }}
+                options={
+                    options !== false
+                        ? {
+                              density: false,
+                              reload: true,
+                              setting: false,
+                              ...options,
+                          }
+                        : false
+                }
+                dateFormatter='string'
+                onRow={(row) => {
+                    return {
+                        onClick: () => rowClick?.(row),
+                        style: {
+                            cursor: rowClick ? 'pointer' : undefined,
+                        },
+                    };
+                }}
+                {...props}
+            />
+        </ProTabulatorProvider>
     );
 };
 

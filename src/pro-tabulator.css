@@ -59,13 +59,13 @@
     cursor: pointer;
 }
 
+.pro-tabulator-pro-table-list-toolbar-setting-item [class*=' pro-tabulator-tooltip'] {
+    font-size: 16px;
+}
+
 .pro-tabulator .pro-tabulator-pro-card-body {
     padding: 0;
     display: flex;
     flex-direction: column;
     row-gap: 10px;
-}
-
-.pro-tabulator-pro-table-list-toolbar-setting-item:hover {
-    color: #1677ff;
 }
