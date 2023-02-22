@@ -1,6 +1,6 @@
-import { PlusOutlined, RollbackOutlined, SaveOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined, RollbackOutlined, SaveOutlined } from '@ant-design/icons';
 import { ActionType, EditableProTable, ProForm } from '@ant-design/pro-components';
-import { Button, FormInstance, SpinProps } from 'antd';
+import { Button, FormInstance, Popconfirm, SpinProps } from 'antd';
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
 import ProTabulatorProvider from './components/ProTabulatorProvider';
 import useColumns from './hooks/useColumns';
@@ -42,6 +42,8 @@ const EditableProTabulator = <
     rowKey = 'id',
     editable,
     uploadProps,
+    rowSelection,
+    tableAlertRender,
     ...props
 }: EditableProTabulatorProps<DataSource, Params>) => {
     const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
@@ -79,6 +81,7 @@ const EditableProTabulator = <
         ordered,
         editable: true,
         rowKey,
+        hiddenActions: editableProps?.hidden?.actions,
         onDelete: async (id) => {
             await editableProps?.onDelete?.(id);
             actionRef.current.reload();
@@ -105,7 +108,7 @@ const EditableProTabulator = <
         disableStorage,
         onChange: () => {
             if (editableKeys.length > 0 && Object.keys(editableFields).length > 0) {
-                saveAll(editableFields);
+                saveMultiple(editableFields);
             }
         },
     });
@@ -114,7 +117,7 @@ const EditableProTabulator = <
     if (className) classNames.push(className);
     if (id) classNames.push(id);
 
-    const saveAll = async (editableFields: any) => {
+    const saveMultiple = async (editableFields: any) => {
         const fieldList = Object.entries<DataSource>(editableFields).map(([key, value]) => {
             return {
                 [rowKey]: key,
@@ -152,35 +155,60 @@ const EditableProTabulator = <
                 rowKey={rowKey}
                 toolBarRender={(action, rows) => {
                     const toolBarRenders = toolBarRender !== false && toolBarRender ? toolBarRender(action, rows) : [];
+                    if (!editableProps?.hidden?.deleteMultiple && rows.selectedRowKeys.length > 0)
+                        toolBarRenders.push(
+                            <Popconfirm
+                                title='Вы действительно уверены?'
+                                onConfirm={async () => {
+                                    await editableProps?.onDeleteMultiple?.(rows.selectedRowKeys);
+                                    actionRef.current.reload();
+                                    actionRef.current.clearSelected();
+                                }}
+                            >
+                                <Button key='delete' danger icon={<DeleteOutlined />}>
+                                    Удалить выбранные ({rows.selectedRowKeys.length})
+                                </Button>
+                            </Popconfirm>,
+                        );
 
-                    if (editableKeys.length > 0 && Object.keys(editableFields).length > 0)
+                    if (
+                        !editableProps?.hidden?.saveMultiple &&
+                        editableKeys.length > 0 &&
+                        Object.keys(editableFields).length > 0
+                    )
                         toolBarRenders.push(
                             <Button
                                 type='primary'
                                 key='saveAll'
                                 onClick={async () => {
                                     const fields = await form.validateFields();
-                                    await saveAll(fields);
+                                    await saveMultiple(fields);
                                     actionRef.current.reload();
                                 }}
                                 icon={<SaveOutlined />}
                             >
-                                {editableProps?.saveAllText || 'Сохранить все'}
+                                {editableProps?.saveAllText || 'Сохранить'}
                             </Button>,
                         );
-                    toolBarRenders.push(
-                        <Button
-                            key='create'
-                            type='primary'
-                            onClick={async () => {
-                                await editableProps?.onCreate?.();
-                                actionRef.current.reloadAndRest();
-                            }}
-                            icon={<PlusOutlined />}
-                        >
-                            {editableProps?.createText || 'Добавить'}
-                        </Button>,
-                    );
+
+                    if (!editableProps?.hidden?.create)
+                        toolBarRenders.push(
+                            <Button
+                                key='create'
+                                type='primary'
+                                onClick={async () => {
+                                    const id = await editableProps?.onCreate?.();
+                                    if (editableKeys.length > 0 && Object.keys(editableFields).length > 0) {
+                                        saveMultiple(editableFields);
+                                    }
+                                    await actionRef.current.reloadAndRest();
+                                    actionRef.current.startEditable(id);
+                                }}
+                                icon={<PlusOutlined />}
+                            >
+                                {editableProps?.createText || 'Добавить'}
+                            </Button>,
+                        );
 
                     toolBarRenders.push(uploadRender);
                     toolBarRenders.push(downloadRender);
@@ -233,6 +261,12 @@ const EditableProTabulator = <
                         : false
                 }
                 dateFormatter='string'
+                rowSelection={
+                    !editableProps?.hidden?.deleteMultiple || rowSelection != false
+                        ? { alwaysShowAlert: false, ...rowSelection }
+                        : rowSelection
+                }
+                tableAlertRender={tableAlertRender || false}
                 onRow={(row) => {
                     return {
                         onClick: () => rowClick?.(row),

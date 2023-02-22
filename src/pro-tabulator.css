@@ -69,3 +69,18 @@
     flex-direction: column;
     row-gap: 10px;
 }
+
+.pro-tabulator-edit-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.pro-tabulator-edit-actions .pro-tabulator-btn.pro-tabulator-btn-sm.pro-tabulator-btn-link {
+    padding: 0;
+    height: 22px;
+}
+.pro-tabulator-edit-actions .pro-tabulator-btn.pro-tabulator-btn-sm.pro-tabulator-btn-link .pro-tabulator-icon {
+    vertical-align: 0;
+}

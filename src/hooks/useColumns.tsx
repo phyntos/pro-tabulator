@@ -1,6 +1,6 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { ProColumns } from '@ant-design/pro-components';
-import { Popconfirm } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import { DateEditablePicker, DateRangeFilter } from '../components/DateFilter';
@@ -15,10 +15,17 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
     ordered,
     rowKey,
     onDelete,
+    hiddenActions,
 }: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter' | 'ordered' | 'rowKey'> & {
     filterList: FilterHidden[];
     editable?: boolean;
     onDelete?: (id: string) => Promise<void>;
+    hiddenActions?:
+        | true
+        | {
+              edit?: boolean;
+              delete?: boolean;
+          };
 }) => {
     const newColumns = columns.map((column) => {
         const filterItem = filterList.find((x) => x.dataIndex === column.dataIndex);
@@ -67,39 +74,46 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
     if (ordered)
         newColumns.unshift({
             title: '#',
-            dataIndex: 'order',
+            dataIndex: 'orderNumber',
             fixed: 'left',
             width: 45,
             hideInSearch: true,
             editable: false,
         });
-    if (editable)
+    if (editable && typeof hiddenActions !== 'boolean')
         newColumns.push({
             title: 'Действия',
             valueType: 'option',
             width: 80,
             fixed: 'right',
             render(dom, entity, index, action) {
+                if (typeof hiddenActions === 'boolean') return null;
                 return (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-                        <a
-                            onClick={() => {
-                                action.startEditable(entity[rowKey]);
-                            }}
-                        >
-                            <EditOutlined />
-                        </a>
-                        <Popconfirm
-                            title='Вы уверены?'
-                            placement='left'
-                            onConfirm={() => {
-                                onDelete(entity[rowKey]);
-                            }}
-                        >
-                            <a>
-                                <DeleteOutlined />
-                            </a>
-                        </Popconfirm>
+                    <div className='pro-tabulator-edit-actions'>
+                        {!hiddenActions?.edit && (
+                            <Button
+                                type='link'
+                                size='small'
+                                onClick={() => {
+                                    action.startEditable(entity[rowKey]);
+                                }}
+                            >
+                                <EditOutlined />
+                            </Button>
+                        )}
+                        {!hiddenActions?.delete && (
+                            <Popconfirm
+                                title='Вы уверены?'
+                                placement='left'
+                                onConfirm={() => {
+                                    onDelete(entity[rowKey]);
+                                }}
+                            >
+                                <Button danger size='small' type='link'>
+                                    <DeleteOutlined />
+                                </Button>
+                            </Popconfirm>
+                        )}
                     </div>
                 );
             },

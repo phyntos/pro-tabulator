@@ -7,10 +7,10 @@ type DevDataType = 'first' | 'second';
 
 type DevData = {
     id: number;
-    name: string;
-    date: string;
+    name?: string;
+    date?: string;
     description?: string;
-    type: DevDataType;
+    type?: DevDataType;
 };
 
 type DevDataFilter = {
@@ -59,7 +59,7 @@ const getData = async (
 ): Promise<{ data: DevData[]; total: number; success: boolean }> => {
     let data = mockData;
     if (params.name !== undefined) {
-        data = data.filter((item) => (params.name !== undefined ? item.name.includes(params.name) : true));
+        data = data.filter((item) => (params.name !== undefined ? item.name?.includes(params.name) : true));
     }
     if (params.dateAfter !== undefined) {
         data = data.filter((item) => dayjs(item.date).isBefore(dayjs(params.dateAfter)));
@@ -68,7 +68,7 @@ const getData = async (
         data = data.filter((item) => dayjs(item.date).isAfter(dayjs(params.dateBefore)));
     }
     if (params.type && params.type.length > 0) {
-        data = data.filter((item) => params.type?.includes(item.type));
+        data = data.filter((item) => item.type && params.type?.includes(item.type));
     }
 
     // console.log('request', JSON.parse(JSON.stringify(params)));
@@ -82,7 +82,11 @@ const getData = async (
 
 const DevTabulator = () => {
     return (
-        <div style={{ height: 500 }}>
+        <div
+            style={{
+                height: '90vh',
+            }}
+        >
             <EditableProTabulator<DevData, DevDataFilter>
                 // dataSource={mockData}
                 request={getData}
@@ -92,7 +96,7 @@ const DevTabulator = () => {
                     fileName: 'ASD',
                 }}
                 pagination={{
-                    defaultPageSize: 3,
+                    defaultPageSize: 10,
                 }}
                 disableStorage
                 id='TEST'
@@ -159,6 +163,18 @@ const DevTabulator = () => {
                     },
                     onDelete: async (data) => {
                         console.log(data);
+                    },
+                    onCreate: async () => {
+                        mockData.unshift({
+                            id: 14,
+                        });
+                        return 14;
+                    },
+                    hidden: {
+                        actions: {
+                            // delete: true,
+                        },
+                        // saveMultiple: true,
                     },
                 }}
             />

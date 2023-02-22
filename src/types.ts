@@ -62,8 +62,20 @@ export type EditableProTabulatorProps<
             createText?: React.ReactNode;
             onSave?: (data: DataSource) => Promise<void>;
             onSaveMultiple?: (data: DataSource[]) => Promise<void>;
-            onDelete?: (id: string) => Promise<void>;
-            onCreate?: () => Promise<void>;
+            onDelete?: (id: string | number) => Promise<void>;
+            onDeleteMultiple?: (ids: (string | number)[]) => Promise<void>;
+            onCreate?: () => Promise<string | number>;
+            hidden?: {
+                create?: boolean;
+                saveMultiple?: boolean;
+                deleteMultiple?: boolean;
+                actions?:
+                    | true
+                    | {
+                          edit?: boolean;
+                          delete?: boolean;
+                      };
+            };
         };
     };
 
@@ -113,4 +125,4 @@ export type ProTabulatorProps<
 > = ProTabulatorExtraProps<DataSource, Params> &
     Omit<ProTableProps<DataSource, Params>, 'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef' | 'rowKey'>;
 
-export type ProTabulatorDataSource<T extends Record<string, any>> = T & { order?: number };
+export type ProTabulatorDataSource<T extends Record<string, any>> = T & { orderNumber?: number };
