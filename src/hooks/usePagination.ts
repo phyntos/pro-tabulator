@@ -5,7 +5,7 @@ import { ProTabulatorProps } from '../types';
 
 type TablePaginationHookArgs<DataSource extends Record<string, any>> = Pick<
     ProTabulatorProps<DataSource>,
-    'id' | 'pagination' | 'actionRef' | 'disableStorage'
+    'id' | 'pagination' | 'actionRef'
 > & {
     tableStorage: TableStorage;
     onChange?: () => void;
@@ -16,11 +16,10 @@ const usePagination = <DataSource extends Record<string, any>>({
     actionRef,
     pagination,
     id,
-    disableStorage,
     onChange,
 }: TablePaginationHookArgs<DataSource>) => {
     useEffect(() => {
-        if (id && pagination !== false && !disableStorage) {
+        if (id && pagination !== false) {
             const pageInfo = tableStorage.getPageInfo();
             actionRef?.current?.setPageInfo?.(pageInfo);
         }

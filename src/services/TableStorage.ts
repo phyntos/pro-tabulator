@@ -7,14 +7,17 @@ export default class TableStorage<Params extends Record<string, any> = Record<st
         current: 1,
     } as ProTabulatorRequestParams<Params>;
     total: number | undefined;
+    disabled: boolean;
 
-    constructor(id: string | undefined | false) {
+    constructor(id: string | undefined | false, disabled: boolean) {
         if (id) {
             this.id = id;
-            const storageName = `${id}_AxiosParams`;
-            const stringifiedParams = sessionStorage.getItem(storageName);
-            if (stringifiedParams) {
-                this.params = JSON.parse(stringifiedParams);
+            if (!disabled) {
+                const storageName = `${id}_AxiosParams`;
+                const stringifiedParams = sessionStorage.getItem(storageName);
+                if (stringifiedParams) {
+                    this.params = JSON.parse(stringifiedParams);
+                }
             }
         }
     }
@@ -26,7 +29,9 @@ export default class TableStorage<Params extends Record<string, any> = Record<st
     setParams(params: ProTabulatorRequestParams<Params>) {
         if (this.id) {
             this.params = params;
-            sessionStorage.setItem(`${this.id}_AxiosParams`, JSON.stringify(this.params));
+            if (!this.disabled) {
+                sessionStorage.setItem(`${this.id}_AxiosParams`, JSON.stringify(this.params));
+            }
         }
     }
 

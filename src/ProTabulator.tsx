@@ -46,11 +46,11 @@ const ProTabulator = <
     const [loading, setLoading] = useState<boolean | SpinProps>();
     const heightScroll = useHeightScroll(id, loading);
 
-    const tableStorage = useMemo(() => new TableStorage<Params>(id), [id]);
+    const tableStorage = useMemo(() => new TableStorage<Params>(id, disableStorage), [id, disableStorage]);
     const storageParams = tableStorage.getFormValues();
 
     const initialValues = useMemo(
-        () => (disableStorage || !id || hiddenFilter ? {} : getInitialValues<DataSource>(columns, storageParams)),
+        () => (hiddenFilter ? {} : getInitialValues<DataSource>(columns, storageParams)),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [],
     );
@@ -89,7 +89,6 @@ const ProTabulator = <
         pagination,
         actionRef,
         tableStorage,
-        disableStorage,
     });
     // actionRef.current.
     const classNames = ['pro-tabulator'];
@@ -103,13 +102,11 @@ const ProTabulator = <
                 actionRef={actionRef}
                 request={async (params, sorter) => {
                     const requestParams = getRequestParams<Params>(params, sorter);
-                    if (tableStorage && !disableStorage) {
-                        tableStorage.setParams(requestParams);
-                    }
+                    tableStorage.setParams(requestParams);
                     const response = await request(requestParams);
                     const { total } = response;
                     let { data } = response;
-                    if (total && tableStorage && !disableStorage) tableStorage.setTotal(total);
+                    if (total) tableStorage.setTotal(total);
                     if (ordered) {
                         data = getOrderedData(data, params.current, params.pageSize);
                     }

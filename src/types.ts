@@ -89,7 +89,7 @@ export type ProTabulatorExtraProps<
     ordered?: boolean;
     actionRef?: React.MutableRefObject<ActionType | undefined>;
     formRef?: React.MutableRefObject<FormInstance<any>>;
-    id?: string;
+    id: string;
     disableStorage?: boolean;
     disableHeightScroll?: boolean;
     downloadProps?: {
