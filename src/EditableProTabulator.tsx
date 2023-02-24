@@ -98,18 +98,25 @@ const EditableProTabulator = <
         tableStorage,
     });
 
-    const { uploadRender } = useUpload<DataSource>({ uploadProps, columns, actionRef });
+    const saveEditableFields = () => {
+        if (editableKeys.length > 0 && Object.keys(editableFields).length > 0) {
+            saveMultiple(editableFields);
+        }
+    };
+
+    const { uploadRender } = useUpload<DataSource>({
+        uploadProps,
+        columns,
+        actionRef,
+        saveEditableFields,
+    });
 
     const defaultPagination = usePagination<DataSource>({
         id,
         pagination,
         actionRef,
         tableStorage,
-        onChange: () => {
-            if (editableKeys.length > 0 && Object.keys(editableFields).length > 0) {
-                saveMultiple(editableFields);
-            }
-        },
+        saveEditableFields,
     });
     // actionRef.current.
     const classNames = ['pro-tabulator'];
@@ -195,9 +202,7 @@ const EditableProTabulator = <
                                 type='primary'
                                 onClick={async () => {
                                     const id = await editableProps?.onCreate?.();
-                                    if (editableKeys.length > 0 && Object.keys(editableFields).length > 0) {
-                                        saveMultiple(editableFields);
-                                    }
+                                    saveEditableFields();
                                     await actionRef.current.reloadAndRest();
                                     actionRef.current.startEditable(id);
                                 }}

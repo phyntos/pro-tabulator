@@ -8,7 +8,7 @@ type TablePaginationHookArgs<DataSource extends Record<string, any>> = Pick<
     'id' | 'pagination' | 'actionRef'
 > & {
     tableStorage: TableStorage;
-    onChange?: () => void;
+    saveEditableFields?: () => void;
 };
 
 const usePagination = <DataSource extends Record<string, any>>({
@@ -16,7 +16,7 @@ const usePagination = <DataSource extends Record<string, any>>({
     actionRef,
     pagination,
     id,
-    onChange,
+    saveEditableFields,
 }: TablePaginationHookArgs<DataSource>) => {
     useEffect(() => {
         if (id && pagination !== false) {
@@ -39,8 +39,8 @@ const usePagination = <DataSource extends Record<string, any>>({
         showTotal: (total: number) => `Всего: ${total} записей`,
         ...pagination,
         onChange: (page, pageSize) => {
+            saveEditableFields?.();
             pagination?.onChange?.(page, pageSize);
-            onChange?.();
         },
     };
     return defaultPagination;

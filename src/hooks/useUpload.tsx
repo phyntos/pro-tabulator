@@ -10,7 +10,10 @@ const useUpload = <DataSource extends Record<string, any>, Params extends Record
     uploadProps,
     columns,
     actionRef,
-}: Pick<ProTabulatorProps<DataSource, Params>, 'uploadProps' | 'columns' | 'actionRef'>) => {
+    saveEditableFields,
+}: Pick<ProTabulatorProps<DataSource, Params>, 'uploadProps' | 'columns' | 'actionRef'> & {
+    saveEditableFields?: () => void;
+}) => {
     const [loading, setLoading] = useState(false);
 
     const uploadColumns =
@@ -31,6 +34,7 @@ const useUpload = <DataSource extends Record<string, any>, Params extends Record
                 header: uploadColumns.map((col) => col.dataIndex),
             });
             dataJson.shift();
+            saveEditableFields?.();
             await uploadProps.onUpload(dataJson);
             actionRef.current.reload();
         } finally {
