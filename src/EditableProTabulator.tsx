@@ -46,7 +46,8 @@ const EditableProTabulator = <
     tableAlertRender,
     ...props
 }: EditableProTabulatorProps<DataSource, Params>) => {
-    const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
+    const [editableKeys, setEditableKeys] = useState<React.Key[]>([]);
+    const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const actionRef = useRef<ActionType>();
     const formRef = useRef<FormInstance<any>>();
     const [loading, setLoading] = useState<boolean | SpinProps>();
@@ -84,6 +85,7 @@ const EditableProTabulator = <
         hiddenActions: editableProps?.hidden?.actions,
         onDelete: async (id) => {
             await editableProps?.onDelete?.(id);
+            setSelectedKeys((old) => old.filter((val) => String(id) !== String(val)));
             actionRef.current.reload();
         },
     });
@@ -131,7 +133,7 @@ const EditableProTabulator = <
             };
         });
         await editableProps?.onSaveMultiple?.(fieldList);
-        setEditableRowKeys((old) =>
+        setEditableKeys((old) =>
             old.filter((val) => !fieldList.some((field) => String(field[rowKey]) === String(val))),
         );
     };
@@ -233,7 +235,7 @@ const EditableProTabulator = <
                     },
                     actionRender: (row, config, dom) => [dom.save, dom.cancel],
                     form,
-                    onChange: setEditableRowKeys,
+                    onChange: setEditableKeys,
                     saveText: <SaveOutlined />,
                     cancelText: <RollbackOutlined />,
                     ...editable,
@@ -265,7 +267,12 @@ const EditableProTabulator = <
                 dateFormatter='string'
                 rowSelection={
                     !editableProps?.hidden?.deleteMultiple || (rowSelection != false && rowSelection != undefined)
-                        ? { alwaysShowAlert: false, ...rowSelection }
+                        ? {
+                              alwaysShowAlert: false,
+                              selectedRowKeys: selectedKeys,
+                              onChange: setSelectedKeys,
+                              ...rowSelection,
+                          }
                         : rowSelection
                 }
                 tableAlertRender={tableAlertRender || false}

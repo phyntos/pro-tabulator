@@ -170,6 +170,9 @@ const DevTabulator = () => {
                         });
                         return 14;
                     },
+                    onDeleteMultiple: async (data) => {
+                        console.log(data);
+                    },
                     hidden: {
                         actions: {
                             // delete: true,
