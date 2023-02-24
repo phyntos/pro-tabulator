@@ -29,7 +29,7 @@ const useFilterButton = <
             const storageParams = tableStorage.getFormValues();
             setFilterList(
                 columns
-                    .filter((column) => column.valueType)
+                    .filter((column) => column.valueType && !column.hideInSearch)
                     .map<FilterHidden>((column) => ({
                         dataIndex: column.dataIndex,
                         title: column.title,

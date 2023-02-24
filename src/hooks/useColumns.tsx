@@ -33,7 +33,12 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
             ...column,
             valueType: column.valueType === 'dateApartRange' ? undefined : column.valueType,
         };
-        const disabled = !column.valueType || !filterItem || filterItem.filterMode === 'hidden' || hiddenFilter;
+        const disabled =
+            column.hideInSearch ||
+            !column.valueType ||
+            !filterItem ||
+            filterItem.filterMode === 'hidden' ||
+            hiddenFilter;
 
         if (disabled) proColumn.search = false;
         if (column.valueType === 'dateApartRange') {

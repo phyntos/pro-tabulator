@@ -20,7 +20,7 @@ export type ProTabulatorColumn<DataSource extends Record<string, any>> = {
     excelRender?: (text: string, record: DataSource, index: number) => string | object;
     valueType?: ProColumns<DataSource>['valueType'] | 'dateApartRange';
     useForUpload?: boolean;
-} & Omit<ProColumns<DataSource>, 'hideInSearch' | 'dataIndex' | 'title' | 'filterMode' | 'valueType'>;
+} & Omit<ProColumns<DataSource>, 'dataIndex' | 'title' | 'filterMode' | 'valueType'>;
 
 export type ProTabulatorRequestParams<Params extends Record<string, any> = Record<string, any>> = Partial<Params> & {
     pageSize?: number;
