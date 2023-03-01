@@ -104,6 +104,7 @@ export type ProTabulatorExtraProps<
     };
     uploadProps?: {
         columns?: UploadColumn[];
+        ordered?: boolean;
         onUpload: (data: DataSource[]) => Promise<void>;
     };
     colorPrimary?: string;

@@ -22,6 +22,12 @@ const useUpload = <DataSource extends Record<string, any>, Params extends Record
 
     if (!uploadProps?.onUpload) return { uploadRender: [] };
 
+    if (uploadProps?.ordered)
+        uploadColumns.unshift({
+            title: '#',
+            dataIndex: 'orderNumber',
+        });
+
     const fileChange = async (file: RcFile) => {
         try {
             setLoading(true);
