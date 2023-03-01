@@ -1,6 +1,6 @@
 {
     "name": "pro-tabulator",
-    "version": "0.1.20",
+    "version": "0.1.21",
     "description": "Pro Tabulator",
     "main": "./dist/pro-tabulator.js",
     "types": "./dist/pro-tabulator.d.ts",
