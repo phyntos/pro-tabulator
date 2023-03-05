@@ -81,6 +81,11 @@
     padding: 0;
     height: 22px;
 }
+
 .pro-tabulator-edit-actions .pro-tabulator-btn.pro-tabulator-btn-sm.pro-tabulator-btn-link .pro-tabulator-icon {
     vertical-align: 0;
+}
+
+.pro-tabulator .pro-tabulator-pro-field-select-light-select .pro-tabulator-select {
+    width: 100%;
 }
