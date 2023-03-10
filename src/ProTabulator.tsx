@@ -1,5 +1,6 @@
-import { ActionType, ProTable } from '@ant-design/pro-components';
-import { FormInstance, SpinProps } from 'antd';
+import { DeleteOutlined, PlusOutlined, RollbackOutlined, SaveOutlined } from '@ant-design/icons';
+import { ActionType, EditableProTable, ProForm, ProTable } from '@ant-design/pro-components';
+import { Button, FormInstance, Popconfirm, SpinProps } from 'antd';
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
 import ProTabulatorProvider from './components/ProTabulatorProvider';
 import useColumns from './hooks/useColumns';
@@ -36,11 +37,17 @@ const ProTabulator = <
     options,
     colorPrimary,
     disableHeightScroll,
+    editableProps,
     onLoadingChange,
     rowKey = 'id',
+    editable,
     uploadProps,
+    rowSelection,
+    tableAlertRender,
     ...props
 }: ProTabulatorProps<DataSource, Params>) => {
+    const [editableKeys, setEditableKeys] = useState<React.Key[]>([]);
+    const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const actionRef = useRef<ActionType>();
     const formRef = useRef<FormInstance<any>>();
     const [loading, setLoading] = useState<boolean | SpinProps>();
@@ -54,6 +61,10 @@ const ProTabulator = <
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [],
     );
+
+    const [form] = ProForm.useForm();
+
+    const editableFields = ProForm.useWatch([], form);
 
     useImperativeHandle(propActionRef, () => actionRef.current);
     useImperativeHandle(propFormRef, () => formRef.current);
@@ -69,7 +80,14 @@ const ProTabulator = <
         filterList,
         hiddenFilter,
         ordered,
+        editable,
         rowKey,
+        hiddenActions: editableProps?.hidden?.actions,
+        onDelete: async (id) => {
+            await editableProps?.onDelete?.(id);
+            setSelectedKeys((old) => old.filter((val) => String(id) !== String(val)));
+            actionRef.current.reload();
+        },
     });
 
     const { downloadRender, onDataSourceChange } = useDownload({
@@ -82,22 +100,49 @@ const ProTabulator = <
         tableStorage,
     });
 
-    const { uploadRender } = useUpload<DataSource>({ uploadProps, columns, actionRef });
+    const saveEditableFields = () => {
+        if (editable && editableKeys.length > 0 && Object.keys(editableFields).length > 0) {
+            saveMultiple(editableFields);
+        }
+    };
+
+    const { uploadRender } = useUpload<DataSource>({
+        uploadProps,
+        columns,
+        actionRef,
+        saveEditableFields,
+    });
 
     const defaultPagination = usePagination<DataSource>({
         id,
         pagination,
         actionRef,
         tableStorage,
+        saveEditableFields,
     });
-    // actionRef.current.
-    const classNames = ['pro-tabulator'];
+
+    const classNames = [className, id].filter(Boolean);
     if (className) classNames.push(className);
     if (id) classNames.push(id);
 
+    const saveMultiple = async (editableFields: any) => {
+        const fieldList = Object.entries<DataSource>(editableFields).map(([key, value]) => {
+            return {
+                [rowKey]: key,
+                ...value,
+            };
+        });
+        await editableProps?.onSaveMultiple?.(fieldList);
+        setEditableKeys((old) =>
+            old.filter((val) => !fieldList.some((field) => String(field[rowKey]) === String(val))),
+        );
+    };
+
+    const ProTableComponent = editable ? EditableProTable : ProTable;
+
     return (
         <ProTabulatorProvider colorPrimary={colorPrimary}>
-            <ProTable<DataSource, Params>
+            <ProTableComponent<DataSource, Params>
                 dataSource={dataSource}
                 actionRef={actionRef}
                 request={async (params, sorter) => {
@@ -116,9 +161,67 @@ const ProTabulator = <
                     };
                 }}
                 rowKey={rowKey}
+                tableExtraRender={() => <div>123</div>}
                 toolBarRender={(action, rows) => {
                     const toolBarRenders = toolBarRender !== false && toolBarRender ? toolBarRender(action, rows) : [];
-                    return toolBarRenders.concat([...downloadRender, ...uploadRender]);
+                    if (editable) {
+                        if (!editableProps?.hidden?.deleteMultiple && rows.selectedRowKeys.length > 0)
+                            toolBarRenders.push(
+                                <Popconfirm
+                                    title='Вы действительно уверены?'
+                                    onConfirm={async () => {
+                                        await editableProps?.onDeleteMultiple?.(rows.selectedRowKeys);
+                                        actionRef.current.reload();
+                                        actionRef.current.clearSelected();
+                                    }}
+                                >
+                                    <Button key='delete' danger icon={<DeleteOutlined />}>
+                                        Удалить выбранные ({rows.selectedRowKeys.length})
+                                    </Button>
+                                </Popconfirm>,
+                            );
+
+                        if (
+                            !editableProps?.hidden?.saveMultiple &&
+                            editableKeys.length > 0 &&
+                            Object.keys(editableFields).length > 0
+                        )
+                            toolBarRenders.push(
+                                <Button
+                                    type='primary'
+                                    key='saveAll'
+                                    onClick={async () => {
+                                        const fields = await form.validateFields();
+                                        await saveMultiple(fields);
+                                        actionRef.current.reload();
+                                    }}
+                                    icon={<SaveOutlined />}
+                                >
+                                    {editableProps?.saveAllText || 'Сохранить'}
+                                </Button>,
+                            );
+
+                        if (!editableProps?.hidden?.create)
+                            toolBarRenders.push(
+                                <Button
+                                    key='create'
+                                    type='primary'
+                                    onClick={async () => {
+                                        const id = await editableProps?.onCreate?.();
+                                        saveEditableFields();
+                                        await actionRef.current.reloadAndRest();
+                                        actionRef.current.startEditable(id);
+                                    }}
+                                    icon={<PlusOutlined />}
+                                >
+                                    {editableProps?.createText || 'Добавить'}
+                                </Button>,
+                            );
+                    }
+
+                    toolBarRenders.push(...uploadRender);
+                    toolBarRenders.push(...downloadRender);
+                    return toolBarRenders;
                 }}
                 form={{ initialValues }}
                 onDataSourceChange={onDataSourceChange}
@@ -128,7 +231,25 @@ const ProTabulator = <
                 toolbar={{
                     title: hiddenFilter || !filterList.length ? undefined : filterButton,
                 }}
-                className={classNames.join(' ')}
+                editable={
+                    editable
+                        ? {
+                              type: 'multiple',
+                              editableKeys,
+                              onSave: async (rowKey, data) => {
+                                  await editableProps?.onSave?.(data);
+                                  actionRef.current.reload();
+                              },
+                              actionRender: (row, config, dom) => [dom.save, dom.cancel],
+                              form,
+                              onChange: setEditableKeys,
+                              saveText: <SaveOutlined />,
+                              cancelText: <RollbackOutlined />,
+                          }
+                        : undefined
+                }
+                recordCreatorProps={false}
+                rootClassName={classNames.join(' ')}
                 onLoadingChange={(loading) => {
                     setLoading(loading);
                     onLoadingChange?.(loading);
@@ -152,6 +273,18 @@ const ProTabulator = <
                         : false
                 }
                 dateFormatter='string'
+                rowSelection={
+                    (editable && !editableProps?.hidden?.deleteMultiple) ||
+                    (rowSelection != false && rowSelection != undefined)
+                        ? {
+                              alwaysShowAlert: false,
+                              selectedRowKeys: selectedKeys,
+                              onChange: setSelectedKeys,
+                              ...rowSelection,
+                          }
+                        : rowSelection
+                }
+                tableAlertRender={tableAlertRender || false}
                 onRow={(row) => {
                     return {
                         onClick: () => rowClick?.(row),

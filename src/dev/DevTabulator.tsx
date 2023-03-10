@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import React from 'react';
-import EditableProTabulator from '../EditableProTabulator';
+import ProTabulator from '../ProTabulator';
 import { ProTabulatorRequestParams } from '../types';
 
 type DevDataType = 'first' | 'second';
@@ -87,11 +87,12 @@ const DevTabulator = () => {
                 height: '90vh',
             }}
         >
-            <EditableProTabulator<DevData, DevDataFilter>
+            <ProTabulator<DevData, DevDataFilter>
                 // dataSource={mockData}
                 request={getData}
                 // hiddenFilter
                 ordered
+                editable
                 downloadProps={{
                     fileName: 'ASD',
                 }}

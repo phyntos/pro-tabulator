@@ -1,5 +1,4 @@
 import { ActionType, ProColumns, ProTableProps } from '@ant-design/pro-components';
-import { EditableProTableProps } from '@ant-design/pro-table/es/components/EditableTable';
 import { FormInstance } from 'antd';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -49,36 +48,6 @@ export type UploadColumn = {
     dataIndex: string;
 };
 
-export type EditableProTabulatorProps<
-    DataSource extends Record<string, any>,
-    Params extends Record<string, any> = Record<string, any>,
-> = ProTabulatorExtraProps<DataSource, Params> &
-    Omit<
-        EditableProTableProps<DataSource, Params>,
-        'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef' | 'rowKey'
-    > & {
-        editableProps?: {
-            saveAllText?: React.ReactNode;
-            createText?: React.ReactNode;
-            onSave?: (data: DataSource) => Promise<void>;
-            onSaveMultiple?: (data: DataSource[]) => Promise<void>;
-            onDelete?: (id: string | number) => Promise<void>;
-            onDeleteMultiple?: (ids: (string | number)[]) => Promise<void>;
-            onCreate?: () => Promise<string | number>;
-            hidden?: {
-                create?: boolean;
-                saveMultiple?: boolean;
-                deleteMultiple?: boolean;
-                actions?:
-                    | true
-                    | {
-                          edit?: boolean;
-                          delete?: boolean;
-                      };
-            };
-        };
-    };
-
 export type ProTabulatorExtraProps<
     DataSource extends Record<string, any>,
     Params extends Record<string, any> = Record<string, any>,
@@ -92,6 +61,7 @@ export type ProTabulatorExtraProps<
     id: string;
     disableStorage?: boolean;
     disableHeightScroll?: boolean;
+    editable?: boolean;
     downloadProps?: {
         fileName: string;
         excelColumns?: DownloadColumn[];
@@ -109,6 +79,26 @@ export type ProTabulatorExtraProps<
     };
     colorPrimary?: string;
     rowKey?: string;
+    editableProps?: {
+        saveAllText?: React.ReactNode;
+        createText?: React.ReactNode;
+        onSave?: (data: DataSource) => Promise<void>;
+        onSaveMultiple?: (data: DataSource[]) => Promise<void>;
+        onDelete?: (id: string | number) => Promise<void>;
+        onDeleteMultiple?: (ids: (string | number)[]) => Promise<void>;
+        onCreate?: () => Promise<string | number>;
+        hidden?: {
+            create?: boolean;
+            saveMultiple?: boolean;
+            deleteMultiple?: boolean;
+            actions?:
+                | true
+                | {
+                      edit?: boolean;
+                      delete?: boolean;
+                  };
+        };
+    };
 } & (
     | {
           dataSource: ProTabulatorDataSource<DataSource>[];
@@ -124,6 +114,9 @@ export type ProTabulatorProps<
     DataSource extends Record<string, any>,
     Params extends Record<string, any> = Record<string, any>,
 > = ProTabulatorExtraProps<DataSource, Params> &
-    Omit<ProTableProps<DataSource, Params>, 'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef' | 'rowKey'>;
+    Omit<
+        ProTableProps<DataSource, Params>,
+        'columns' | 'request' | 'dataSource' | 'actionRef' | 'formRef' | 'rowKey' | 'onChange' | 'editable'
+    >;
 
 export type ProTabulatorDataSource<T extends Record<string, any>> = T & { orderNumber?: number };

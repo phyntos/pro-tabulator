@@ -7,7 +7,7 @@ const getRequestParams = <U>(
 ): ProTabulatorRequestParams<U> => {
     const sort = Object.entries(sorter)[0];
     const orderBy = params.orderBy || (sort ? sort[0] + (sort[1] === 'ascend' ? 'Asc' : 'Desc') : undefined);
-    return { ...params, orderBy };
+    return JSON.parse(JSON.stringify({ ...params, orderBy }));
 };
 
 export default getRequestParams;
