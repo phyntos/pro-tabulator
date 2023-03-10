@@ -206,6 +206,21 @@ const ProTabulator = <
                             </Button>,
                         );
 
+                    if (editable && !editableProps?.hidden?.manualCreate)
+                        toolBarRenders.push(
+                            <Button
+                                key='manualCreate'
+                                type='primary'
+                                onClick={async () => {
+                                    saveEditableFields();
+                                    actionRef.current.addEditRecord({ id: 'CREATE' }, { position: 'top' });
+                                }}
+                                icon={<PlusOutlined />}
+                            >
+                                {editableProps?.createText || 'Создать'}
+                            </Button>,
+                        );
+
                     toolBarRenders.push(...uploadRender);
                     toolBarRenders.push(...downloadRender);
                     return toolBarRenders;

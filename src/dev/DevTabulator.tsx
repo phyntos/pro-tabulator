@@ -171,6 +171,12 @@ const DevTabulator = () => {
                         });
                         return 14;
                     },
+                    onManualCreate: async () => {
+                        mockData.unshift({
+                            id: 14,
+                        });
+                        return 14;
+                    },
                     onDeleteMultiple: async (data) => {
                         console.log(data);
                     },

@@ -82,13 +82,16 @@ export type ProTabulatorExtraProps<
     editableProps?: {
         saveAllText?: React.ReactNode;
         createText?: React.ReactNode;
+        manualCreateText?: React.ReactNode;
         onSave?: (data: DataSource) => Promise<void>;
         onSaveMultiple?: (data: DataSource[]) => Promise<void>;
         onDelete?: (id: string | number) => Promise<void>;
         onDeleteMultiple?: (ids: (string | number)[]) => Promise<void>;
         onCreate?: () => Promise<string | number>;
+        onManualCreate?: (data: DataSource) => Promise<string | number>;
         hidden?: {
             create?: boolean;
+            manualCreate?: boolean;
             saveMultiple?: boolean;
             deleteMultiple?: boolean;
             actions?:
