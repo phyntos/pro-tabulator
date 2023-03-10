@@ -242,8 +242,9 @@ const ProTabulator = <
                         ? {
                               type: 'multiple',
                               editableKeys,
-                              onSave: async (rowKey, data) => {
-                                  if (rowKey === 'CREATE') {
+                              onSave: async (rowRecord, data) => {
+                                  if (rowRecord === 'CREATE') {
+                                      delete data[rowKey];
                                       await editableProps?.onManualCreate?.(data);
                                   } else {
                                       await editableProps?.onSave?.(data);
