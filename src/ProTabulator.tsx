@@ -65,6 +65,8 @@ const ProTabulator = <
         [],
     );
 
+    const isCreateMode = editableKeys.includes('CREATE');
+
     const [form] = ProForm.useForm();
 
     const editableFields = ProForm.useWatch([], form);
@@ -86,6 +88,7 @@ const ProTabulator = <
         editable,
         rowKey,
         hiddenActions: editableProps?.hidden?.actions,
+        isCreateMode,
         onDelete: async (id) => {
             await editableProps?.onDelete?.(id);
             setSelectedKeys((old) => old.filter((val) => String(id) !== String(val)));
@@ -105,7 +108,7 @@ const ProTabulator = <
     });
 
     const saveEditableFields = () => {
-        if (editable && editableKeys.length > 0 && Object.keys(editableFields).length > 0) {
+        if (editable && !isCreateMode && editableKeys.length > 0 && Object.keys(editableFields).length > 0) {
             saveMultiple(editableFields);
         }
     };
@@ -171,6 +174,7 @@ const ProTabulator = <
                     if (
                         editable &&
                         !editableProps?.hidden?.saveMultiple &&
+                        !isCreateMode &&
                         editableKeys.length > 0 &&
                         Object.keys(editableFields).length > 0
                     )
@@ -189,7 +193,7 @@ const ProTabulator = <
                             </Button>,
                         );
 
-                    if (editable && !editableProps?.hidden?.create)
+                    if (editable && !editableProps?.hidden?.create && !isCreateMode)
                         toolBarRenders.push(
                             <Button
                                 key='create'
@@ -206,7 +210,7 @@ const ProTabulator = <
                             </Button>,
                         );
 
-                    if (editable && !editableProps?.hidden?.manualCreate)
+                    if (editable && !editableProps?.hidden?.manualCreate && !isCreateMode)
                         toolBarRenders.push(
                             <Button
                                 key='manualCreate'
@@ -239,7 +243,11 @@ const ProTabulator = <
                               type: 'multiple',
                               editableKeys,
                               onSave: async (rowKey, data) => {
-                                  await editableProps?.onSave?.(data);
+                                  if (rowKey === 'CREATE') {
+                                      await editableProps?.onManualCreate?.(data);
+                                  } else {
+                                      await editableProps?.onSave?.(data);
+                                  }
                                   actionRef.current.reload();
                               },
                               actionRender: (row, config, dom) => [dom.save, dom.cancel],
@@ -299,7 +307,7 @@ const ProTabulator = <
                 }}
                 tableAlertOptionRender={(props) => {
                     const renders: React.ReactNode[] = [];
-                    if (editable && !editableProps?.hidden?.deleteMultiple)
+                    if (editable && !isCreateMode && !editableProps?.hidden?.deleteMultiple)
                         renders.push(
                             <Popconfirm
                                 key='delete'
@@ -318,6 +326,7 @@ const ProTabulator = <
 
                     if (
                         editable &&
+                        !isCreateMode &&
                         !editableProps?.hidden?.saveMultiple &&
                         props.selectedRowKeys.some((x) => !editableKeys.includes(x))
                     )
@@ -339,6 +348,7 @@ const ProTabulator = <
 
                     if (
                         editable &&
+                        !isCreateMode &&
                         !editableProps?.hidden?.saveMultiple &&
                         props.selectedRowKeys.some((x) => editableKeys.includes(x))
                     )
@@ -361,6 +371,7 @@ const ProTabulator = <
 
                     if (
                         editable &&
+                        !isCreateMode &&
                         !editableProps?.hidden?.saveMultiple &&
                         props.selectedRowKeys.some((x) => editableKeys.includes(x))
                     )

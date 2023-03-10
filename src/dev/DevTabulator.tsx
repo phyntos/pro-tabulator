@@ -157,10 +157,10 @@ const DevTabulator = () => {
                 ]}
                 editableProps={{
                     onSaveMultiple: async (data) => {
-                        console.log(data);
+                        console.log('SAVE_MULTIPLE', data);
                     },
                     onSave: async (data) => {
-                        console.log(data);
+                        console.log('SAVE', data);
                     },
                     onDelete: async (data) => {
                         console.log(data);
@@ -169,12 +169,14 @@ const DevTabulator = () => {
                         mockData.unshift({
                             id: 14,
                         });
+                        console.log('CREATE');
                         return 14;
                     },
-                    onManualCreate: async () => {
+                    onManualCreate: async (data) => {
                         mockData.unshift({
                             id: 14,
                         });
+                        console.log('MANUAL_CREATE', data);
                         return 14;
                     },
                     onDeleteMultiple: async (data) => {

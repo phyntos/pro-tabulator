@@ -12,6 +12,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
     hiddenFilter,
     filterList,
     editable,
+    isCreateMode,
     ordered,
     rowKey,
     onDelete,
@@ -19,6 +20,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
 }: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter' | 'ordered' | 'rowKey'> & {
     filterList: FilterHidden[];
     editable?: boolean;
+    isCreateMode?: boolean;
     onDelete?: (id: string) => Promise<void>;
     hiddenActions?:
         | true
@@ -95,7 +97,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                 if (typeof hiddenActions === 'boolean') return null;
                 return (
                     <div className='pro-tabulator-edit-actions'>
-                        {!hiddenActions?.edit && (
+                        {!isCreateMode && !hiddenActions?.edit && (
                             <Button
                                 type='link'
                                 size='small'
@@ -106,7 +108,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                                 <EditOutlined />
                             </Button>
                         )}
-                        {!hiddenActions?.delete && (
+                        {!isCreateMode && !hiddenActions?.delete && (
                             <Popconfirm
                                 title='Вы уверены?'
                                 placement='left'
