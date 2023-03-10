@@ -29,54 +29,58 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
               delete?: boolean;
           };
 }) => {
-    const newColumns = columns.map((column) => {
-        const filterItem = filterList.find((x) => x.dataIndex === column.dataIndex);
-        const proColumn: ProColumns<DataSource> = {
-            ...column,
-            valueType: column.valueType === 'dateApartRange' ? undefined : column.valueType,
-        };
-        const disabled =
-            column.hideInSearch ||
-            !column.valueType ||
-            !filterItem ||
-            filterItem.filterMode === 'hidden' ||
-            hiddenFilter;
+    const optionColumns = columns.filter((x) => x.valueType === 'option');
 
-        if (disabled) proColumn.search = false;
-        if (column.valueType === 'dateApartRange') {
-            if (!disabled) {
-                proColumn.search = {
-                    transform: (value, name) => {
-                        return {
-                            [name + 'Before']: value[0] ? dayjs(value[0]).startOf('day') : undefined,
-                            [name + 'After']: value[1] ? dayjs(value[1]).endOf('day') : undefined,
-                        };
-                    },
-                };
-                proColumn.formItemProps = (form, schema) =>
-                    !schema.isEditable
-                        ? {
-                              lightProps: {
-                                  labelFormatter: (value) => {
-                                      const before = value[0] || undefined;
-                                      const after = value[1] || undefined;
-                                      let label = '';
-                                      if (before) label += 'c ' + before.format('DD.MM.YYYY');
-                                      if (before && after) label += ' ';
-                                      if (after) label += 'по ' + after.format('DD.MM.YYYY');
-                                      return label;
+    const newColumns = columns
+        .filter((x) => x.valueType !== 'option')
+        .map((column) => {
+            const filterItem = filterList.find((x) => x.dataIndex === column.dataIndex);
+            const proColumn: ProColumns<DataSource> = {
+                ...column,
+                valueType: column.valueType === 'dateApartRange' ? undefined : column.valueType,
+            };
+            const disabled =
+                column.hideInSearch ||
+                !column.valueType ||
+                !filterItem ||
+                filterItem.filterMode === 'hidden' ||
+                hiddenFilter;
+
+            if (disabled) proColumn.search = false;
+            if (column.valueType === 'dateApartRange') {
+                if (!disabled) {
+                    proColumn.search = {
+                        transform: (value, name) => {
+                            return {
+                                [name + 'Before']: value[0] ? dayjs(value[0]).startOf('day') : undefined,
+                                [name + 'After']: value[1] ? dayjs(value[1]).endOf('day') : undefined,
+                            };
+                        },
+                    };
+                    proColumn.formItemProps = (form, schema) =>
+                        !schema.isEditable
+                            ? {
+                                  lightProps: {
+                                      labelFormatter: (value) => {
+                                          const before = value[0] || undefined;
+                                          const after = value[1] || undefined;
+                                          let label = '';
+                                          if (before) label += 'c ' + before.format('DD.MM.YYYY');
+                                          if (before && after) label += ' ';
+                                          if (after) label += 'по ' + after.format('DD.MM.YYYY');
+                                          return label;
+                                      },
                                   },
-                              },
-                          }
-                        : {};
+                              }
+                            : {};
+                }
+                proColumn.renderFormItem = (schema) =>
+                    schema.isEditable ? <DateEditablePicker /> : <DateRangeFilter label={column.title} />;
+                proColumn.render = (text) => dayjs(text as string).format('DD.MM.YYYY HH:mm');
             }
-            proColumn.renderFormItem = (schema) =>
-                schema.isEditable ? <DateEditablePicker /> : <DateRangeFilter label={column.title} />;
-            proColumn.render = (text) => dayjs(text as string).format('DD.MM.YYYY HH:mm');
-        }
 
-        return proColumn;
-    });
+            return proColumn;
+        });
 
     if (ordered)
         newColumns.unshift({
@@ -87,17 +91,19 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
             hideInSearch: true,
             editable: false,
         });
-    if (editable && typeof hiddenActions !== 'boolean')
+
+    const editableShow = editable && typeof hiddenActions !== 'boolean';
+
+    if (editableShow || optionColumns.length > 0)
         newColumns.push({
             title: 'Действия',
             valueType: 'option',
             width: 80,
             fixed: 'right',
-            render(dom, entity, index, action) {
-                if (typeof hiddenActions === 'boolean') return null;
+            render(dom, entity, index, action, schema) {
                 return (
                     <div className='pro-tabulator-edit-actions'>
-                        {!isCreateMode && !hiddenActions?.edit && (
+                        {editableShow && !isCreateMode && !hiddenActions?.edit && (
                             <Button
                                 type='link'
                                 size='small'
@@ -108,7 +114,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                                 <EditOutlined />
                             </Button>
                         )}
-                        {!isCreateMode && !hiddenActions?.delete && (
+                        {editableShow && !isCreateMode && !hiddenActions?.delete && (
                             <Popconfirm
                                 title='Вы уверены?'
                                 placement='left'
@@ -121,6 +127,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                                 </Button>
                             </Popconfirm>
                         )}
+                        {!isCreateMode && optionColumns.map((col) => col.render(dom, entity, index, action, schema))}
                     </div>
                 );
             },

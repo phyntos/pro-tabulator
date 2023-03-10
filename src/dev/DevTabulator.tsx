@@ -1,3 +1,5 @@
+import { LinkOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
 import ProTabulator from '../ProTabulator';
@@ -153,6 +155,18 @@ const DevTabulator = () => {
                         title: 'Дата номер',
                         valueType: 'dateApartRange',
                         searchState: 'hidden',
+                    },
+                    {
+                        dataIndex: 'date',
+                        title: 'Дата номер',
+                        valueType: 'option',
+                        render: () => {
+                            return (
+                                <Button size='small' type='link'>
+                                    <LinkOutlined />
+                                </Button>
+                            );
+                        },
                     },
                 ]}
                 editableProps={{
