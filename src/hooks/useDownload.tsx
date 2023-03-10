@@ -16,7 +16,7 @@ type TableDownloadHookArgs<
     Params extends Record<string, any> = Record<string, any>,
 > = Pick<
     ProTabulatorProps<DataSource, Params>,
-    'columns' | 'downloadProps' | 'id' | 'actionRef' | 'request' | 'ordered'
+    'columns' | 'downloadProps' | 'id' | 'actionRef' | 'request' | 'ordered' | 'dataSource'
 > & {
     tableStorage: TableStorage<Params>;
 };
@@ -44,8 +44,8 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
     id,
     ordered,
     tableStorage,
+    dataSource,
 }: TableDownloadHookArgs<DataSource, Params>) => {
-    const [dataSource, setDataSource] = useState<DataSource[]>([]);
     const [loading, setLoading] = useState(false);
 
     const pageInfo = actionRef?.current?.pageInfo;
@@ -193,12 +193,10 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
 
     if (typeof downloadProps === 'undefined' || !id)
         return {
-            onDataSourceChange: undefined,
             downloadRender: [],
         };
 
     return {
-        onDataSourceChange: setDataSource,
         downloadRender: [downloadDropdown],
     };
 };

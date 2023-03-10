@@ -1,6 +1,6 @@
-import { DeleteOutlined, PlusOutlined, RollbackOutlined, SaveOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, RollbackOutlined, SaveOutlined } from '@ant-design/icons';
 import { ActionType, EditableProTable, ProForm, ProTable } from '@ant-design/pro-components';
-import { Button, FormInstance, Popconfirm, SpinProps } from 'antd';
+import { Button, FormInstance, Popconfirm, Space, SpinProps } from 'antd';
 import React, { useImperativeHandle, useMemo, useRef, useState } from 'react';
 import ProTabulatorProvider from './components/ProTabulatorProvider';
 import useColumns from './hooks/useColumns';
@@ -9,6 +9,7 @@ import useFilterButton from './hooks/useFilterButton';
 import usePagination from './hooks/usePagination';
 import useUpload from './hooks/useUpload';
 import './pro-tabulator.css';
+import getAlertMessage from './services/getAlertMessage';
 import useHeightScroll from './services/getHeightScroll';
 import getInitialValues from './services/getInitialValues';
 import getOrderedData from './services/getOrderedData';
@@ -44,8 +45,10 @@ const ProTabulator = <
     uploadProps,
     rowSelection,
     tableAlertRender,
+    tableAlertOptionRender,
     ...props
 }: ProTabulatorProps<DataSource, Params>) => {
+    const [requestDataSource, setDataSource] = useState<DataSource[]>([]);
     const [editableKeys, setEditableKeys] = useState<React.Key[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const actionRef = useRef<ActionType>();
@@ -90,7 +93,7 @@ const ProTabulator = <
         },
     });
 
-    const { downloadRender, onDataSourceChange } = useDownload({
+    const { downloadRender } = useDownload({
         columns,
         actionRef,
         downloadProps,
@@ -98,6 +101,7 @@ const ProTabulator = <
         ordered,
         request,
         tableStorage,
+        dataSource: requestDataSource,
     });
 
     const saveEditableFields = () => {
@@ -161,70 +165,53 @@ const ProTabulator = <
                     };
                 }}
                 rowKey={rowKey}
-                tableExtraRender={() => <div>123</div>}
                 toolBarRender={(action, rows) => {
                     const toolBarRenders = toolBarRender !== false && toolBarRender ? toolBarRender(action, rows) : [];
-                    if (editable) {
-                        if (!editableProps?.hidden?.deleteMultiple && rows.selectedRowKeys.length > 0)
-                            toolBarRenders.push(
-                                <Popconfirm
-                                    title='Вы действительно уверены?'
-                                    onConfirm={async () => {
-                                        await editableProps?.onDeleteMultiple?.(rows.selectedRowKeys);
-                                        actionRef.current.reload();
-                                        actionRef.current.clearSelected();
-                                    }}
-                                >
-                                    <Button key='delete' danger icon={<DeleteOutlined />}>
-                                        Удалить выбранные ({rows.selectedRowKeys.length})
-                                    </Button>
-                                </Popconfirm>,
-                            );
 
-                        if (
-                            !editableProps?.hidden?.saveMultiple &&
-                            editableKeys.length > 0 &&
-                            Object.keys(editableFields).length > 0
-                        )
-                            toolBarRenders.push(
-                                <Button
-                                    type='primary'
-                                    key='saveAll'
-                                    onClick={async () => {
-                                        const fields = await form.validateFields();
-                                        await saveMultiple(fields);
-                                        actionRef.current.reload();
-                                    }}
-                                    icon={<SaveOutlined />}
-                                >
-                                    {editableProps?.saveAllText || 'Сохранить'}
-                                </Button>,
-                            );
+                    if (
+                        editable &&
+                        !editableProps?.hidden?.saveMultiple &&
+                        editableKeys.length > 0 &&
+                        Object.keys(editableFields).length > 0
+                    )
+                        toolBarRenders.push(
+                            <Button
+                                type='primary'
+                                key='saveAll'
+                                onClick={async () => {
+                                    const fields = await form.validateFields();
+                                    await saveMultiple(fields);
+                                    actionRef.current.reload();
+                                }}
+                                icon={<SaveOutlined />}
+                            >
+                                {editableProps?.saveAllText || 'Сохранить'}
+                            </Button>,
+                        );
 
-                        if (!editableProps?.hidden?.create)
-                            toolBarRenders.push(
-                                <Button
-                                    key='create'
-                                    type='primary'
-                                    onClick={async () => {
-                                        const id = await editableProps?.onCreate?.();
-                                        saveEditableFields();
-                                        await actionRef.current.reloadAndRest();
-                                        actionRef.current.startEditable(id);
-                                    }}
-                                    icon={<PlusOutlined />}
-                                >
-                                    {editableProps?.createText || 'Добавить'}
-                                </Button>,
-                            );
-                    }
+                    if (editable && !editableProps?.hidden?.create)
+                        toolBarRenders.push(
+                            <Button
+                                key='create'
+                                type='primary'
+                                onClick={async () => {
+                                    const id = await editableProps?.onCreate?.();
+                                    saveEditableFields();
+                                    await actionRef.current.reloadAndRest();
+                                    actionRef.current.startEditable(id);
+                                }}
+                                icon={<PlusOutlined />}
+                            >
+                                {editableProps?.createText || 'Добавить'}
+                            </Button>,
+                        );
 
                     toolBarRenders.push(...uploadRender);
                     toolBarRenders.push(...downloadRender);
                     return toolBarRenders;
                 }}
                 form={{ initialValues }}
-                onDataSourceChange={onDataSourceChange}
+                onDataSourceChange={setDataSource}
                 pagination={defaultPagination}
                 bordered
                 size='middle'
@@ -249,7 +236,7 @@ const ProTabulator = <
                         : undefined
                 }
                 recordCreatorProps={false}
-                rootClassName={classNames.join(' ')}
+                className={classNames.join(' ')}
                 onLoadingChange={(loading) => {
                     setLoading(loading);
                     onLoadingChange?.(loading);
@@ -277,14 +264,129 @@ const ProTabulator = <
                     (editable && !editableProps?.hidden?.deleteMultiple) ||
                     (rowSelection != false && rowSelection != undefined)
                         ? {
-                              alwaysShowAlert: false,
+                              //   alwaysShowAlert: false,
                               selectedRowKeys: selectedKeys,
                               onChange: setSelectedKeys,
                               ...rowSelection,
                           }
                         : rowSelection
                 }
-                tableAlertRender={tableAlertRender || false}
+                tableAlertRender={(props) => {
+                    const renders: React.ReactNode[] = [
+                        <div className='pro-table-alert-info-text' key='alert'>
+                            {getAlertMessage(props.selectedRowKeys.length)}
+                        </div>,
+                    ];
+
+                    if (tableAlertRender) renders.push(tableAlertRender(props));
+
+                    return <Space align='start'>{renders}</Space>;
+                }}
+                tableAlertOptionRender={(props) => {
+                    const renders: React.ReactNode[] = [];
+                    if (editable && !editableProps?.hidden?.deleteMultiple)
+                        renders.push(
+                            <Popconfirm
+                                key='delete'
+                                title='Вы действительно уверены?'
+                                onConfirm={async () => {
+                                    await editableProps?.onDeleteMultiple?.(props.selectedRowKeys);
+                                    actionRef.current.reloadAndRest();
+                                    actionRef.current.clearSelected();
+                                }}
+                            >
+                                <Button size='small' type='link' danger icon={<DeleteOutlined />}>
+                                    Удалить
+                                </Button>
+                            </Popconfirm>,
+                        );
+
+                    if (
+                        editable &&
+                        !editableProps?.hidden?.saveMultiple &&
+                        props.selectedRowKeys.some((x) => !editableKeys.includes(x))
+                    )
+                        renders.push(
+                            <Button
+                                size='small'
+                                key='edit'
+                                type='link'
+                                icon={<EditOutlined />}
+                                onClick={() => {
+                                    setEditableKeys((old) => {
+                                        return old.concat(props.selectedRowKeys);
+                                    });
+                                }}
+                            >
+                                Редактировать
+                            </Button>,
+                        );
+
+                    if (
+                        editable &&
+                        !editableProps?.hidden?.saveMultiple &&
+                        props.selectedRowKeys.some((x) => editableKeys.includes(x))
+                    )
+                        renders.push(
+                            <Button
+                                size='small'
+                                key='cancel'
+                                type='link'
+                                icon={<RollbackOutlined />}
+                                onClick={() => {
+                                    setEditableKeys((old) => {
+                                        return old.filter((val) => !props.selectedRowKeys.includes(val));
+                                    });
+                                    props.onCleanSelected();
+                                }}
+                            >
+                                Отменить редактирование
+                            </Button>,
+                        );
+
+                    if (
+                        editable &&
+                        !editableProps?.hidden?.saveMultiple &&
+                        props.selectedRowKeys.some((x) => editableKeys.includes(x))
+                    )
+                        renders.push(
+                            <Button
+                                size='small'
+                                key='save'
+                                type='link'
+                                icon={<SaveOutlined />}
+                                onClick={async () => {
+                                    const fields = await form.validateFields(props.selectedRowKeys);
+                                    await saveMultiple(fields);
+                                    actionRef.current.reload();
+                                    props.onCleanSelected();
+                                }}
+                            >
+                                Сохранить выбранные
+                            </Button>,
+                        );
+
+                    if (tableAlertOptionRender) renders.push(tableAlertOptionRender(props));
+
+                    renders.push(
+                        <Button
+                            size='small'
+                            key='clear'
+                            type='link'
+                            onClick={() => {
+                                props.onCleanSelected();
+                            }}
+                        >
+                            Очистить
+                        </Button>,
+                    );
+
+                    return (
+                        <Space className='pro-table-alert-option-space' align='start'>
+                            {renders}
+                        </Space>
+                    );
+                }}
                 onRow={(row) => {
                     return {
                         onClick: () => rowClick?.(row),
