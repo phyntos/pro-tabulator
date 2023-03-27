@@ -44,7 +44,6 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
     id,
     ordered,
     tableStorage,
-    dataSource,
 }: TableDownloadHookArgs<DataSource, Params>) => {
     const [loading, setLoading] = useState(false);
 
@@ -125,6 +124,12 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
         await downloadByParams(fileNameAddon, axiosParams, excelColumns, fileName);
     };
 
+    const downloadCurrent = async (fileNameAddon: string, excelColumns?: IExcelColumn[], fileName?: string) => {
+        setLoading(true);
+        const axiosParams = tableStorage.params;
+        await downloadByParams(fileNameAddon, axiosParams, excelColumns, fileName);
+    };
+
     const downloadByParams = async (
         fileNameAddon: string,
         params: ProTabulatorRequestParams<Params>,
@@ -164,8 +169,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
                     {
                         label: <span>Скачать страницу</span>,
                         key: 'downloadPage',
-                        onClick: () =>
-                            downloadDataSource(dataSource, pageInfo?.current + ' стр.', downloadProps?.excelColumns),
+                        onClick: () => downloadCurrent(pageInfo?.current + ' стр.', downloadProps?.excelColumns),
                     },
                     {
                         label: <span>Скачать все</span>,

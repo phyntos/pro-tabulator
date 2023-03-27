@@ -48,7 +48,6 @@ const ProTabulator = <
     tableAlertOptionRender,
     ...props
 }: ProTabulatorProps<DataSource, Params>) => {
-    const [requestDataSource, setDataSource] = useState<DataSource[]>([]);
     const [editableKeys, setEditableKeys] = useState<React.Key[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const actionRef = useRef<ActionType>();
@@ -104,7 +103,6 @@ const ProTabulator = <
         ordered,
         request,
         tableStorage,
-        dataSource: requestDataSource,
     });
 
     const saveEditableFields = () => {
@@ -230,7 +228,6 @@ const ProTabulator = <
                     return toolBarRenders;
                 }}
                 form={{ initialValues }}
-                onDataSourceChange={setDataSource}
                 pagination={defaultPagination}
                 bordered
                 size='middle'
