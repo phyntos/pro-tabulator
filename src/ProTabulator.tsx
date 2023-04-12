@@ -46,6 +46,7 @@ const ProTabulator = <
     rowSelection,
     tableAlertRender,
     tableAlertOptionRender,
+    toolbar,
     ...props
 }: ProTabulatorProps<DataSource, Params>) => {
     const [editableKeys, setEditableKeys] = useState<React.Key[]>([]);
@@ -145,6 +146,8 @@ const ProTabulator = <
 
     const ProTableComponent = editable ? EditableProTable : ProTable;
 
+    const filterButtonComponent = hiddenFilter || !filterList.length ? null : filterButton;
+
     return (
         <ProTabulatorProvider colorPrimary={colorPrimary}>
             <ProTableComponent<DataSource, Params>
@@ -232,7 +235,13 @@ const ProTabulator = <
                 bordered
                 size='middle'
                 toolbar={{
-                    title: hiddenFilter || !filterList.length ? undefined : filterButton,
+                    ...toolbar,
+                    title: (
+                        <Space>
+                            {toolbar.title}
+                            {filterButtonComponent}
+                        </Space>
+                    ),
                 }}
                 editable={
                     editable
