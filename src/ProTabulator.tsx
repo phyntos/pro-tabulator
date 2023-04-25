@@ -36,7 +36,6 @@ const ProTabulator = <
     pagination,
     className,
     options,
-    colorPrimary,
     disableHeightScroll,
     editableProps,
     onLoadingChange,
@@ -149,7 +148,7 @@ const ProTabulator = <
     const filterButtonComponent = hiddenFilter || !filterList.length ? null : filterButton;
 
     return (
-        <ProTabulatorProvider colorPrimary={colorPrimary}>
+        <ProTabulatorProvider>
             <ProTableComponent<DataSource, Params>
                 dataSource={dataSource}
                 actionRef={actionRef}
@@ -238,7 +237,7 @@ const ProTabulator = <
                     ...toolbar,
                     title: (
                         <Space>
-                            {toolbar.title}
+                            {toolbar?.title}
                             {filterButtonComponent}
                         </Space>
                     ),

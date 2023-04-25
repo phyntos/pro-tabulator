@@ -38,6 +38,9 @@ const config: webpack.Configuration = {
     externals: {
         react: 'react',
         'react-dom': 'react-dom',
+        antd: 'antd',
+        '@ant-design/icons': '@ant-design/icons',
+        '@ant-design/pro-components': '@ant-design/pro-components',
     },
     optimization: {
         minimize: true,

@@ -77,7 +77,6 @@ export type ProTabulatorExtraProps<
         ordered?: boolean;
         onUpload: (data: DataSource[]) => Promise<void>;
     };
-    colorPrimary?: string;
     rowKey?: string;
     editableProps?: {
         saveAllText?: React.ReactNode;
