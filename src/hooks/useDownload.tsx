@@ -8,6 +8,7 @@ import React, { useCallback, useState } from 'react';
 import getOrderedData from '../services/getOrderedData';
 import TableStorage from '../services/TableStorage';
 import { ProTabulatorProps, ProTabulatorRequestParams } from '../types';
+import useLocale from './useLocale';
 
 const xlsxExtentsion = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
@@ -48,6 +49,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
     const [loading, setLoading] = useState(false);
 
     const pageInfo = actionRef?.current?.pageInfo;
+    const getLocale = useLocale();
 
     const getExcelColumns = useCallback(() => {
         return columns
@@ -89,7 +91,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
                   }));
 
         excel
-            .addSheet('Лист')
+            .addSheet(getLocale('sheet'))
             .setTBodyStyle({
                 fontName: 'Times New Roman',
                 fontSize: 11,
@@ -153,7 +155,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
     };
 
     const extraMenu = (downloadProps?.extra || []).map((el) => ({
-        label: 'Скачать ' + el.name,
+        label: getLocale('download') + ' ' + el.name,
         key: el.name,
         onClick: () =>
             el.params
@@ -167,21 +169,22 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
             menu={{
                 items: [
                     {
-                        label: <span>Скачать страницу</span>,
+                        label: <span>{getLocale('downloadPage')}</span>,
                         key: 'downloadPage',
-                        onClick: () => downloadCurrent(pageInfo?.current + ' стр.', downloadProps?.excelColumns),
+                        onClick: () =>
+                            downloadCurrent(pageInfo?.current + ' ' + getLocale('page'), downloadProps?.excelColumns),
                     },
                     {
-                        label: <span>Скачать все</span>,
+                        label: <span>{getLocale('downloadAll')}</span>,
                         key: 'downloadAll',
-                        onClick: () => downloadAll('все', downloadProps?.excelColumns),
+                        onClick: () => downloadAll(getLocale('all'), downloadProps?.excelColumns),
                     },
                     ...extraMenu,
                 ],
             }}
             trigger={['click']}
         >
-            <Tooltip title='Скачать'>
+            <Tooltip title={getLocale('download')}>
                 <div className='pro-tabulator-pro-table-list-toolbar-setting-item'>
                     <span>
                         {loading ? (

@@ -9,13 +9,14 @@ import useFilterButton from './hooks/useFilterButton';
 import usePagination from './hooks/usePagination';
 import useUpload from './hooks/useUpload';
 import './pro-tabulator.css';
-import getAlertMessage from './services/getAlertMessage';
+import useAlertMessage from './hooks/useAlertMessage';
 import useHeightScroll from './services/getHeightScroll';
 import getInitialValues from './services/getInitialValues';
 import getOrderedData from './services/getOrderedData';
 import getRequestParams from './services/getRequestParams';
 import TableStorage from './services/TableStorage';
 import { ProTabulatorProps } from './types';
+import useLocale from './hooks/useLocale';
 
 const ProTabulator = <
     DataSource extends Record<string, any>,
@@ -57,6 +58,9 @@ const ProTabulator = <
 
     const tableStorage = useMemo(() => new TableStorage<Params>(id, disableStorage), [id, disableStorage]);
     const storageParams = tableStorage.getFormValues();
+
+    const getAlertMessage = useAlertMessage();
+    const getLocale = useLocale();
 
     const initialValues = useMemo(
         () => (hiddenFilter ? {} : getInitialValues<DataSource>(columns, storageParams)),
@@ -189,7 +193,7 @@ const ProTabulator = <
                                 }}
                                 icon={<SaveOutlined />}
                             >
-                                {editableProps?.saveAllText || 'Сохранить'}
+                                {editableProps?.saveAllText || getLocale('save')}
                             </Button>,
                         );
 
@@ -206,7 +210,7 @@ const ProTabulator = <
                                 }}
                                 icon={<PlusOutlined />}
                             >
-                                {editableProps?.createText || 'Добавить'}
+                                {editableProps?.createText || getLocale('create')}
                             </Button>,
                         );
 
@@ -221,7 +225,7 @@ const ProTabulator = <
                                 }}
                                 icon={<PlusOutlined />}
                             >
-                                {editableProps?.createText || 'Создать'}
+                                {editableProps?.createText || getLocale('add')}
                             </Button>,
                         );
 
@@ -317,7 +321,7 @@ const ProTabulator = <
                         renders.push(
                             <Popconfirm
                                 key='delete'
-                                title='Вы действительно уверены?'
+                                title={getLocale('areYouSure')}
                                 onConfirm={async () => {
                                     await editableProps?.onDeleteMultiple?.(props.selectedRowKeys);
                                     actionRef.current.reloadAndRest();
@@ -325,7 +329,7 @@ const ProTabulator = <
                                 }}
                             >
                                 <Button size='small' type='link' danger icon={<DeleteOutlined />}>
-                                    Удалить
+                                    {getLocale('delete')}
                                 </Button>
                             </Popconfirm>,
                         );
@@ -348,7 +352,7 @@ const ProTabulator = <
                                     });
                                 }}
                             >
-                                Редактировать
+                                {getLocale('edit')}
                             </Button>,
                         );
 
@@ -371,7 +375,7 @@ const ProTabulator = <
                                     props.onCleanSelected();
                                 }}
                             >
-                                Отменить редактирование
+                                {getLocale('cancelEdit')}
                             </Button>,
                         );
 
@@ -394,7 +398,7 @@ const ProTabulator = <
                                     props.onCleanSelected();
                                 }}
                             >
-                                Сохранить выбранные
+                                {getLocale('saveChoised')}
                             </Button>,
                         );
 
@@ -409,7 +413,7 @@ const ProTabulator = <
                                 props.onCleanSelected();
                             }}
                         >
-                            Очистить
+                            {getLocale('clear')}
                         </Button>,
                     );
 

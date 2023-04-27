@@ -1,6 +1,7 @@
 import { Space, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import React from 'react';
+import useLocale from '../hooks/useLocale';
 
 export const DateRangeFilter = ({
     value,
@@ -11,11 +12,12 @@ export const DateRangeFilter = ({
     onChange?: (value: dayjs.Dayjs[]) => void;
     label?: string;
 }) => {
+    const getLocale = useLocale();
     return (
         <Space>
             <DatePicker
                 value={value?.[0] || null}
-                placeholder={`${label} (с)`}
+                placeholder={`${label} (${getLocale('from')})`}
                 onChange={(date) => {
                     onChange([date, value?.[1]]);
                 }}
@@ -29,7 +31,7 @@ export const DateRangeFilter = ({
             />
             <DatePicker
                 value={value?.[1] || null}
-                placeholder={`${label} (по)`}
+                placeholder={`${label} (${getLocale('to')})`}
                 onChange={(date) => {
                     onChange([value?.[0], date]);
                 }}

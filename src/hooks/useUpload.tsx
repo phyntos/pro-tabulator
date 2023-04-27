@@ -5,6 +5,7 @@ import { RcFile } from 'antd/es/upload';
 import React, { useState } from 'react';
 import { read, utils } from 'xlsx';
 import { ProTabulatorProps } from '../types';
+import useLocale from './useLocale';
 
 const useUpload = <DataSource extends Record<string, any>, Params extends Record<string, any> = Record<string, any>>({
     uploadProps,
@@ -15,6 +16,7 @@ const useUpload = <DataSource extends Record<string, any>, Params extends Record
     saveEditableFields?: () => void;
 }) => {
     const [loading, setLoading] = useState(false);
+    const getLocale = useLocale();
 
     const uploadColumns =
         uploadProps?.columns ||
@@ -56,16 +58,19 @@ const useUpload = <DataSource extends Record<string, any>, Params extends Record
                 menu={{
                     items: [
                         {
-                            label: <span>Скачать шаблон</span>,
+                            label: <span>{getLocale('downloadTemplate')}</span>,
                             key: 'downloadTemplate',
                             onClick: () => {
-                                new Excel().addSheet('Лист').addColumns(uploadColumns).saveAs('Шаблон.xlsx');
+                                new Excel()
+                                    .addSheet(getLocale('sheet'))
+                                    .addColumns(uploadColumns)
+                                    .saveAs(getLocale('template') + '.xlsx');
                             },
                         },
                         {
                             label: (
                                 <Upload accept='.xlsx' showUploadList={false} beforeUpload={fileChange}>
-                                    Загрузить шаблон
+                                    {getLocale('uploadTemplate')}
                                 </Upload>
                             ),
                             key: 'uploadTemplate',
@@ -74,7 +79,7 @@ const useUpload = <DataSource extends Record<string, any>, Params extends Record
                 }}
                 trigger={['click']}
             >
-                <Tooltip title='Загрузить'>
+                <Tooltip title={getLocale('upload')}>
                     <div className='pro-tabulator-pro-table-list-toolbar-setting-item'>
                         <span>
                             {loading ? (

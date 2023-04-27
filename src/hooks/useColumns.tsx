@@ -6,6 +6,7 @@ import React from 'react';
 import { DateEditablePicker, DateRangeFilter } from '../components/DateFilter';
 import { ProTabulatorProps } from '../types';
 import { FilterHidden } from './useFilterButton';
+import useLocale from './useLocale';
 
 const useColumns = <DataSource extends Record<string, any>, Params extends Record<string, any> = Record<string, any>>({
     columns,
@@ -29,6 +30,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
               delete?: boolean;
           };
 }) => {
+    const getLocale = useLocale();
     const optionColumns = columns.filter((x) => x.valueType === 'option');
 
     const newColumns = columns
@@ -65,9 +67,17 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                                           const before = value[0] || undefined;
                                           const after = value[1] || undefined;
                                           let label = '';
-                                          if (before) label += 'c ' + before.format('DD.MM.YYYY');
-                                          if (before && after) label += ' ';
-                                          if (after) label += 'по ' + after.format('DD.MM.YYYY');
+                                          if (before)
+                                              label +=
+                                                  getLocale('fromBefore') +
+                                                  before.format('DD.MM.YYYY') +
+                                                  getLocale('fromAfter');
+                                          if (before && after) label += getLocale('between');
+                                          if (after)
+                                              label +=
+                                                  getLocale('toBefore') +
+                                                  after.format('DD.MM.YYYY') +
+                                                  getLocale('toAfter');
                                           return label;
                                       },
                                   },
@@ -96,7 +106,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
 
     if (editableShow || optionColumns.length > 0)
         newColumns.push({
-            title: 'Действия',
+            title: getLocale('actions'),
             valueType: 'option',
             width: 80,
             fixed: 'right',
@@ -116,7 +126,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                         )}
                         {editableShow && !isCreateMode && !hiddenActions?.delete && (
                             <Popconfirm
-                                title='Вы уверены?'
+                                title={getLocale('areYouSure')}
                                 placement='left'
                                 onConfirm={() => {
                                     onDelete(entity[rowKey]);

@@ -1,7 +1,8 @@
 import { TablePaginationConfig } from 'antd';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import TableStorage from '../services/TableStorage';
 import { ProTabulatorProps } from '../types';
+import { ConfigContext } from 'antd/es/config-provider';
 
 type TablePaginationHookArgs<DataSource extends Record<string, any>> = Pick<
     ProTabulatorProps<DataSource>,
@@ -18,6 +19,8 @@ const usePagination = <DataSource extends Record<string, any>>({
     id,
     saveEditableFields,
 }: TablePaginationHookArgs<DataSource>) => {
+    const { locale } = useContext(ConfigContext);
+
     useEffect(() => {
         if (id && pagination !== false) {
             const pageInfo = tableStorage.getPageInfo();
@@ -34,9 +37,14 @@ const usePagination = <DataSource extends Record<string, any>>({
         size: 'small',
         defaultCurrent: 1,
         locale: {
-            items_per_page: '/ записей',
+            items_per_page: locale.locale === 'ru' ? '/ записей' : locale.locale === 'kk' ? '/ жазба' : undefined,
         },
-        showTotal: (total: number) => `Всего: ${total} записей`,
+        showTotal:
+            locale.locale === 'ru'
+                ? (total: number) => `Всего: ${total} записей`
+                : locale.locale === 'kk'
+                ? (total: number) => `Барлығы: ${total} жазба`
+                : undefined,
         ...pagination,
         onChange: (page, pageSize) => {
             saveEditableFields?.();

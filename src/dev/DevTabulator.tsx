@@ -1,9 +1,11 @@
 import { LinkOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { useState } from 'react';
 import ProTabulator from '../ProTabulator';
 import { ProTabulatorRequestParams } from '../types';
+import ruRU from 'antd/locale/ru_RU';
+import kkKZ from 'antd/locale/kk_KZ';
 
 type DevDataType = 'first' | 'second';
 
@@ -83,128 +85,132 @@ const getData = async (
 };
 
 const DevTabulator = () => {
+    const [lang] = useState<'kk' | 'ru'>('kk');
+
     return (
-        <div
-            style={{
-                height: '90vh',
-            }}
-        >
-            <ProTabulator<DevData, DevDataFilter>
-                // dataSource={mockData}
-                request={getData}
-                // hiddenFilter
-                ordered
-                editable
-                downloadProps={{
-                    fileName: 'ASD',
+        <ConfigProvider locale={lang === 'ru' ? ruRU : kkKZ}>
+            <div
+                style={{
+                    height: '90vh',
                 }}
-                pagination={{
-                    defaultPageSize: 10,
-                }}
-                disableStorage
-                id='TEST'
-                uploadProps={{
-                    columns: [
+            >
+                <ProTabulator<DevData, DevDataFilter>
+                    // dataSource={mockData}
+                    request={getData}
+                    // hiddenFilter
+                    ordered
+                    editable
+                    downloadProps={{
+                        fileName: 'ASD',
+                    }}
+                    pagination={{
+                        defaultPageSize: 10,
+                    }}
+                    disableStorage
+                    id='TEST'
+                    uploadProps={{
+                        columns: [
+                            {
+                                dataIndex: 'name',
+                                title: 'Наименование',
+                            },
+                            {
+                                dataIndex: 'type',
+                                title: 'Тип номер',
+                            },
+                        ],
+                        onUpload: async (data) => {
+                            await getData({});
+                            console.log(data);
+                        },
+                    }}
+                    columns={[
                         {
                             dataIndex: 'name',
                             title: 'Наименование',
+                            valueType: 'text',
+                            searchState: 'fixed',
+                            width: 200,
                         },
                         {
                             dataIndex: 'type',
                             title: 'Тип номер',
-                        },
-                    ],
-                    onUpload: async (data) => {
-                        await getData({});
-                        console.log(data);
-                    },
-                }}
-                columns={[
-                    {
-                        dataIndex: 'name',
-                        title: 'Наименование',
-                        valueType: 'text',
-                        searchState: 'fixed',
-                        width: 200,
-                    },
-                    {
-                        dataIndex: 'type',
-                        title: 'Тип номер',
-                        valueType: 'select',
-                        // filterMode: 'hidden',
-                        // request: getType,
-                        fieldProps: (form, schema) => ({
-                            mode: schema.isEditable ? undefined : 'multiple',
-                            showSearch: schema.isEditable,
-                            onChange: (value: string) => {
-                                if (schema.rowKey) form.setFieldValue([schema.rowKey, 'name'], value);
+                            valueType: 'select',
+                            // filterMode: 'hidden',
+                            // request: getType,
+                            fieldProps: (form, schema) => ({
+                                mode: schema.isEditable ? undefined : 'multiple',
+                                showSearch: schema.isEditable,
+                                onChange: (value: string) => {
+                                    if (schema.rowKey) form.setFieldValue([schema.rowKey, 'name'], value);
+                                },
+                            }),
+                            width: 500,
+                            render: (dom, record) => (
+                                <>
+                                    {dom} - {record.name}
+                                </>
+                            ),
+                            request: async (params) => {
+                                return typeOptions.concat({ label: params.keyWords, value: params.keyWords || 'CODE' });
                             },
-                        }),
-                        width: 500,
-                        render: (dom, record) => (
-                            <>
-                                {dom} - {record.name}
-                            </>
-                        ),
-                        request: async (params) => {
-                            return typeOptions.concat({ label: params.keyWords, value: params.keyWords || 'CODE' });
                         },
-                    },
-                    {
-                        dataIndex: 'date',
-                        title: 'Дата номер',
-                        valueType: 'dateApartRange',
-                        searchState: 'hidden',
-                    },
-                    {
-                        dataIndex: 'date',
-                        title: 'Дата номер',
-                        valueType: 'option',
-                        render: () => {
-                            return (
-                                <Button size='small' type='link'>
-                                    <LinkOutlined />
-                                </Button>
-                            );
+                        {
+                            dataIndex: 'date',
+                            title: 'Дата номер',
+                            valueType: 'dateApartRange',
+                            searchState: 'hidden',
                         },
-                    },
-                ]}
-                editableProps={{
-                    onSaveMultiple: async (data) => {
-                        console.log('SAVE_MULTIPLE', data);
-                    },
-                    onSave: async (data) => {
-                        console.log('SAVE', data);
-                    },
-                    onDelete: async (data) => {
-                        console.log(data);
-                    },
-                    onCreate: async () => {
-                        mockData.unshift({
-                            id: 14,
-                        });
-                        console.log('CREATE');
-                        return 14;
-                    },
-                    onManualCreate: async (data) => {
-                        mockData.unshift({
-                            id: 14,
-                        });
-                        console.log('MANUAL_CREATE', data);
-                        return 14;
-                    },
-                    onDeleteMultiple: async (data) => {
-                        console.log(data);
-                    },
-                    hidden: {
-                        actions: {
-                            // delete: true,
+                        {
+                            dataIndex: 'date',
+                            title: 'Дата номер',
+                            valueType: 'option',
+                            render: () => {
+                                return (
+                                    <Button size='small' type='link'>
+                                        <LinkOutlined />
+                                    </Button>
+                                );
+                            },
                         },
-                        // saveMultiple: true,
-                    },
-                }}
-            />
-        </div>
+                    ]}
+                    editableProps={{
+                        onSaveMultiple: async (data) => {
+                            console.log('SAVE_MULTIPLE', data);
+                        },
+                        onSave: async (data) => {
+                            console.log('SAVE', data);
+                        },
+                        onDelete: async (data) => {
+                            console.log(data);
+                        },
+                        onCreate: async () => {
+                            mockData.unshift({
+                                id: 14,
+                            });
+                            console.log('CREATE');
+                            return 14;
+                        },
+                        onManualCreate: async (data) => {
+                            mockData.unshift({
+                                id: 14,
+                            });
+                            console.log('MANUAL_CREATE', data);
+                            return 14;
+                        },
+                        onDeleteMultiple: async (data) => {
+                            console.log(data);
+                        },
+                        hidden: {
+                            actions: {
+                                // delete: true,
+                            },
+                            // saveMultiple: true,
+                        },
+                    }}
+                />
+            </div>
+        </ConfigProvider>
     );
 };
 
