@@ -2,12 +2,12 @@ import ru from '../locales/ru';
 import kk from '../locales/kk';
 import en from '../locales/en';
 import { useContext } from 'react';
-import { ConfigContext } from 'antd/es/config-provider';
+import { ConfigProvider } from 'antd';
 
 const locales = { ru, kk, en };
 
 const useLocale = () => {
-    const { locale } = useContext(ConfigContext);
+    const { locale } = useContext(ConfigProvider.ConfigContext);
 
     return (text: keyof typeof locales.ru) => {
         console.log({ text, locale: locale.locale, locales });

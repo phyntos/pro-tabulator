@@ -1,8 +1,7 @@
-import { TablePaginationConfig } from 'antd';
+import { TablePaginationConfig, ConfigProvider } from 'antd';
 import { useContext, useEffect } from 'react';
 import TableStorage from '../services/TableStorage';
 import { ProTabulatorProps } from '../types';
-import { ConfigContext } from 'antd/es/config-provider';
 
 type TablePaginationHookArgs<DataSource extends Record<string, any>> = Pick<
     ProTabulatorProps<DataSource>,
@@ -19,7 +18,7 @@ const usePagination = <DataSource extends Record<string, any>>({
     id,
     saveEditableFields,
 }: TablePaginationHookArgs<DataSource>) => {
-    const { locale } = useContext(ConfigContext);
+    const { locale } = useContext(ConfigProvider.ConfigContext);
 
     useEffect(() => {
         if (id && pagination !== false) {
