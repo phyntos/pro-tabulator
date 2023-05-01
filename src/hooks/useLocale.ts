@@ -10,7 +10,7 @@ const useLocale = () => {
     const { locale } = useContext(ConfigProvider.ConfigContext);
 
     return (text: keyof typeof locales.ru) => {
-        console.log({ text, locale: locale.locale, locales });
+        // console.log({ text, locale: locale.locale, locales });
 
         let lang = locale.locale;
         if (!Object.keys(locales).includes(locale.locale)) {
