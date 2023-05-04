@@ -12,7 +12,7 @@ type DevDataType = 'first' | 'second';
 type DevData = {
     id: number;
     name?: string;
-    date?: string;
+    date?: string | null;
     description?: string;
     type?: DevDataType;
 };
@@ -32,7 +32,7 @@ const mockData: DevData[] = [
         description: 'Lorem ipsum dolor sit amet, consectetur adip',
         type: 'second',
     },
-    { id: 2, name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
+    { id: 2, name: 'fgh', date: undefined, type: 'second' },
     { id: 3, name: 'fgh', date: '2015-08-01T15:30', type: 'first' },
     { id: 4, name: 'fgh', date: '2016-08-01T15:30', type: 'second' },
     { id: 5, name: 'fgh', date: '2014-08-01T15:30', type: 'second' },
