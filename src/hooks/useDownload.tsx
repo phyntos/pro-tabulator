@@ -65,7 +65,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
                 key: String(column.dataIndex),
                 width: Number(column.width) * 1.5,
                 excelRender: (text: string, record: DataSource, index: number) => {
-                    if (column.valueType === 'date' && text) {
+                    if ((column.valueType === 'date' || column.valueType === 'dateApartRange') && text) {
                         return dayjs(text).format('DD.MM.YYYY HH:mm');
                     }
                     return excelTextRender(column.excelRender)(text, record, index);

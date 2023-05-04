@@ -86,7 +86,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                 }
                 proColumn.renderFormItem = (schema) =>
                     schema.isEditable ? <DateEditablePicker /> : <DateRangeFilter label={column.title} />;
-                proColumn.render = (text) => dayjs(text as string).format('DD.MM.YYYY HH:mm');
+                proColumn.render = (text) => (text ? dayjs(text as string).format('DD.MM.YYYY HH:mm') : '');
             }
 
             return proColumn;
