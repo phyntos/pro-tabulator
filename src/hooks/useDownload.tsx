@@ -7,7 +7,13 @@ import FileSaver from 'file-saver';
 import React, { useCallback, useState } from 'react';
 import getOrderedData from '../services/getOrderedData';
 import TableStorage from '../services/TableStorage';
-import { ProTabulatorProps, ProTabulatorRequestParams } from '../types';
+import {
+    DownloadColumn,
+    ProTabulatorColumn,
+    ProTabulatorDataSource,
+    ProTabulatorProps,
+    ProTabulatorRequestParams,
+} from '../types';
 import useLocale from './useLocale';
 
 const xlsxExtentsion = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -37,6 +43,74 @@ const excelTextRender =
         return '-';
     };
 
+const getExcelMapColumns = <DataSource extends Record<string, any>>(
+    columns: ProTabulatorColumn<ProTabulatorDataSource<DataSource>>[],
+) => {
+    return columns
+        .filter(
+            (column) =>
+                typeof column.title !== 'undefined' &&
+                typeof column.dataIndex !== 'undefined' &&
+                (typeof column.showInExcel !== 'undefined' ? column.showInExcel : !column.hideInTable),
+        )
+        .map((column) => ({
+            title: column.excelTitle || column.title,
+            dataIndex: String(column.dataIndex),
+            key: String(column.dataIndex),
+            width: Number(column.width) * 1.5,
+            excelRender: (text: string, record: DataSource, index: number) => {
+                if ((column.valueType === 'date' || column.valueType === 'dateApartRange') && text) {
+                    return dayjs(text).format('DD.MM.YYYY HH:mm');
+                }
+                return excelTextRender(column.excelRender)(text, record, index);
+            },
+        }));
+};
+
+export const downloadExcelDataSource = <DataSource extends Record<string, any>>({
+    dataSource,
+    excelColumns,
+    sheetName,
+    fileName,
+}: {
+    dataSource: DataSource[];
+    excelColumns: DownloadColumn[];
+    sheetName?: string;
+    fileName?: string;
+}) => {
+    const excel = new Excel();
+
+    const columns = excelColumns.map((column) => ({
+        ...column,
+        excelRender: excelTextRender(column.excelRender),
+    }));
+
+    excel
+        .addSheet(sheetName)
+        .setTBodyStyle({
+            fontName: 'Times New Roman',
+            fontSize: 11,
+            background: 'FFDBE5F1',
+            color: 'FF000000',
+            border: true,
+        })
+        .setTHeadStyle({
+            fontName: 'Times New Roman',
+            fontSize: 11,
+            background: 'FF4F81BD',
+            color: 'FF000000',
+            border: true,
+        })
+        .addColumns(columns)
+        .addDataSource(dataSource, {
+            str2Percent: true,
+        })
+        .file.saveAs('base64', true)
+        .then((base64: string) => {
+            FileSaver.saveAs(`data:${xlsxExtentsion};base64,${base64}`, fileName + '.xlsx');
+        });
+};
+
 const useDownload = <DataSource extends Record<string, any>, Params extends Record<string, any> = Record<string, any>>({
     downloadProps,
     columns,
@@ -51,27 +125,7 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
     const pageInfo = actionRef?.current?.pageInfo;
     const getLocale = useLocale();
 
-    const getExcelColumns = useCallback(() => {
-        return columns
-            .filter(
-                (column) =>
-                    typeof column.title !== 'undefined' &&
-                    typeof column.dataIndex !== 'undefined' &&
-                    (typeof column.showInExcel !== 'undefined' ? column.showInExcel : !column.hideInTable),
-            )
-            .map((column) => ({
-                title: column.excelTitle || column.title,
-                dataIndex: String(column.dataIndex),
-                key: String(column.dataIndex),
-                width: Number(column.width) * 1.5,
-                excelRender: (text: string, record: DataSource, index: number) => {
-                    if ((column.valueType === 'date' || column.valueType === 'dateApartRange') && text) {
-                        return dayjs(text).format('DD.MM.YYYY HH:mm');
-                    }
-                    return excelTextRender(column.excelRender)(text, record, index);
-                },
-            }));
-    }, [columns]);
+    const getExcelColumns = useCallback(() => getExcelMapColumns(columns), [columns]);
 
     const downloadDataSource = (
         dataSource: DataSource[],
@@ -79,9 +133,6 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
         excelColumns?: IExcelColumn[],
         excelFileName?: string,
     ) => {
-        const excel = new Excel();
-        const fileName = excelFileName || downloadProps?.fileName || 'Excel';
-
         const columns =
             !excelColumns || excelColumns.length === 0
                 ? getExcelColumns()
@@ -90,30 +141,14 @@ const useDownload = <DataSource extends Record<string, any>, Params extends Reco
                       excelRender: excelTextRender(column.excelRender),
                   }));
 
-        excel
-            .addSheet(getLocale('sheet'))
-            .setTBodyStyle({
-                fontName: 'Times New Roman',
-                fontSize: 11,
-                background: 'FFDBE5F1',
-                color: 'FF000000',
-                border: true,
-            })
-            .setTHeadStyle({
-                fontName: 'Times New Roman',
-                fontSize: 11,
-                background: 'FF4F81BD',
-                color: 'FF000000',
-                border: true,
-            })
-            .addColumns(columns)
-            .addDataSource(dataSource, {
-                str2Percent: true,
-            })
-            .file.saveAs('base64', true)
-            .then((base64: string) => {
-                FileSaver.saveAs(`data:${xlsxExtentsion};base64,${base64}`, fileName + '.xlsx');
-            });
+        const fileName = excelFileName || downloadProps?.fileName || 'Excel';
+
+        downloadExcelDataSource({
+            dataSource,
+            excelColumns: columns,
+            fileName,
+            sheetName: getLocale('sheet'),
+        });
     };
 
     const downloadAll = async (fileNameAddon: string, excelColumns?: IExcelColumn[], fileName?: string) => {
