@@ -16,7 +16,9 @@
 }
 
 .pro-tabulator-pro-table-list-toolbar-left {
-    margin-bottom: 0 !important;
+    margin-bottom: 0;
+    flex: unset;
+    width: unset;
 }
 
 .pro-tabulator-pro-table-list-toolbar-right {
@@ -35,23 +37,18 @@
     flex-wrap: nowrap !important;
 }
 
-.pro-tabulator-pro > .pro-tabulator-pro-table .pro-tabulator-table-wrapper .pro-tabulator-table-thead > tr > th,
-.pro-tabulator-pro > .pro-tabulator-pro-table .pro-tabulator-table-wrapper .pro-tabulator-table-thead > tr > td {
+.pro-tabulator-pro-table .pro-tabulator-table-wrapper .pro-tabulator-table-thead > tr > th,
+.pro-tabulator-pro-table .pro-tabulator-table-wrapper .pro-tabulator-table-thead > tr > td {
     font-weight: normal;
 }
 
-.pro-tabulator-pro
-    > .pro-tabulator-pro-table
+.pro-tabulator-pro-table
     .pro-tabulator-table-wrapper
     .pro-tabulator-table-pagination.pro-tabulator-pagination {
     margin: 16px 0 0;
 }
 
-.pro-tabulator-pro {
-    height: 100%;
-}
-
-.pro-tabulator-pro > .pro-tabulator-pro-table {
+.pro-tabulator-pro-table {
     height: 100%;
 }
 
@@ -65,7 +62,7 @@
     font-size: 16px;
 }
 
-.pro-tabulator-pro > .pro-tabulator-pro-table .pro-tabulator-pro-card-body {
+.pro-tabulator-pro-table .pro-tabulator-pro-card-body {
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -88,7 +85,7 @@
     vertical-align: 0;
 }
 
-.pro-tabulator-pro > .pro-tabulator-pro-table .pro-tabulator-pro-field-select-light-select .pro-tabulator-select {
+.pro-tabulator-pro-table .pro-tabulator-pro-field-select-light-select .pro-tabulator-select {
     width: 100%;
 }
 
