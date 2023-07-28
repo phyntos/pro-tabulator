@@ -16,8 +16,9 @@ const useFilterButton = <
 >({
     columns,
     hiddenFilter,
+    hideColumns,
     tableStorage,
-}: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter'> & {
+}: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter' | 'hideColumns'> & {
     tableStorage: TableStorage<Params>;
 }) => {
     const [filterList, setFilterList] = useState<FilterHidden[]>([]);
@@ -27,20 +28,33 @@ const useFilterButton = <
             setFilterList([]);
         } else {
             const storageParams = tableStorage.getFormValues();
-            setFilterList(
+            setFilterList((prev) =>
                 columns
-                    .filter((column) => column.valueType && !column.hideInSearch)
-                    .map<FilterHidden>((column) => ({
-                        dataIndex: column.dataIndex,
-                        title: column.title,
-                        filterMode:
-                            column.searchState === 'hidden' && column.dataIndex in storageParams
-                                ? 'visible'
-                                : column.searchState,
-                    })),
+                    .filter(
+                        (column) =>
+                            column.valueType &&
+                            column.valueType !== 'option' &&
+                            (typeof column.hideInSearch !== 'undefined'
+                                ? !column.hideInSearch
+                                : !(hideColumns || []).includes(column.dataIndex)),
+                    )
+                    .map<FilterHidden>((column) => {
+                        const filterMode = prev.find((x) => x.dataIndex == column.dataIndex)?.filterMode;
+
+                        return {
+                            dataIndex: column.dataIndex,
+                            title: column.title,
+                            filterMode:
+                                typeof filterMode !== 'undefined'
+                                    ? filterMode
+                                    : column.searchState === 'hidden' && column.dataIndex in storageParams
+                                    ? 'visible'
+                                    : column.searchState,
+                        };
+                    }),
             );
         }
-    }, [columns, hiddenFilter, tableStorage]);
+    }, [columns, hiddenFilter, tableStorage, hideColumns]);
 
     const filterContent = (
         <Space direction='vertical'>

@@ -84,6 +84,7 @@ const ProTabulator = <
         columns,
         hiddenFilter,
         tableStorage,
+        hideColumns,
     });
 
     const proColumns = useColumns({
