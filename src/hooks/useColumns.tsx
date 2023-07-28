@@ -17,8 +17,13 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
     ordered,
     rowKey,
     onDelete,
+    hideColumns = [],
     hiddenActions,
-}: Pick<ProTabulatorProps<DataSource, Params>, 'columns' | 'hiddenFilter' | 'ordered' | 'rowKey'> & {
+    sorter,
+}: Pick<
+    ProTabulatorProps<DataSource, Params>,
+    'columns' | 'hiddenFilter' | 'ordered' | 'rowKey' | 'sorter' | 'hideColumns'
+> & {
     filterList: FilterHidden[];
     editable?: boolean;
     isCreateMode?: boolean;
@@ -37,18 +42,39 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
         .filter((x) => x.valueType !== 'option')
         .map((column) => {
             const filterItem = filterList.find((x) => x.dataIndex === column.dataIndex);
+
+            const isHidden = hideColumns.includes(column.dataIndex);
+
+            const hideInSearch = typeof column.hideInSearch === 'undefined' ? isHidden : column.hideInSearch;
+
             const proColumn: ProColumns<DataSource> = {
                 ...column,
                 valueType: column.valueType === 'dateApartRange' ? undefined : column.valueType,
+                sorter: typeof column.sorter === 'undefined' ? sorter : column.sorter,
+                hideInTable: typeof column.hideInTable === 'undefined' ? isHidden : column.hideInTable,
+                hideInSearch,
             };
+
             const disabled =
-                column.hideInSearch ||
-                !column.valueType ||
-                !filterItem ||
-                filterItem.filterMode === 'hidden' ||
-                hiddenFilter;
+                hideInSearch || !column.valueType || !filterItem || filterItem.filterMode === 'hidden' || hiddenFilter;
 
             if (disabled) proColumn.search = false;
+
+            proColumn.formItemProps = (...args) => {
+                const values =
+                    typeof column.formItemProps === 'function'
+                        ? column.formItemProps(...args)
+                        : column.formItemProps ?? {};
+                return { lightProps: { placement: 'bottomLeft', ...values.lightProps }, ...values };
+            };
+
+            if (proColumn.valueType === 'select') {
+                proColumn.fieldProps = (...args) => {
+                    const values =
+                        typeof column.fieldProps === 'function' ? column.fieldProps(...args) : column.fieldProps;
+                    return { dropdownMatchSelectWidth: false, ...values };
+                };
+            }
             if (column.valueType === 'dateApartRange') {
                 if (!disabled) {
                     proColumn.search = {
@@ -84,9 +110,13 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
                               }
                             : {};
                 }
+
                 proColumn.renderFormItem = (schema) =>
                     schema.isEditable ? <DateEditablePicker /> : <DateRangeFilter label={column.title} />;
-                proColumn.render = (text) => {
+
+                proColumn.render = (...args) => {
+                    if (column.render) return column.render(...args);
+                    const text = args[0];
                     return text && text !== '-' ? dayjs(text as string).format('DD.MM.YYYY HH:mm') : '';
                 };
             }
@@ -110,7 +140,7 @@ const useColumns = <DataSource extends Record<string, any>, Params extends Recor
         newColumns.push({
             title: getLocale('actions'),
             valueType: 'option',
-            width: 80,
+            width: '100px',
             fixed: 'right',
             render(dom, entity, index, action, schema) {
                 return (

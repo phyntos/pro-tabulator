@@ -60,8 +60,10 @@ export type ProTabulatorExtraProps<
     formRef?: React.MutableRefObject<FormInstance<any>>;
     id: string;
     disableStorage?: boolean;
+    sorter?: boolean;
     disableHeightScroll?: boolean;
     editable?: boolean;
+    hideColumns?: ProTabulatorColumn<ProTabulatorDataSource<DataSource>>['dataIndex'][];
     downloadProps?: {
         fileName: string;
         excelColumns?: DownloadColumn[];

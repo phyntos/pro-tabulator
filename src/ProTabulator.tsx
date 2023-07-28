@@ -46,7 +46,10 @@ const ProTabulator = <
     rowSelection,
     tableAlertRender,
     tableAlertOptionRender,
+    showSorterTooltip = false,
     toolbar,
+    sorter,
+    hideColumns,
     ...props
 }: ProTabulatorProps<DataSource, Params>) => {
     const [editableKeys, setEditableKeys] = useState<React.Key[]>([]);
@@ -97,6 +100,8 @@ const ProTabulator = <
             setSelectedKeys((old) => old.filter((val) => String(id) !== String(val)));
             actionRef.current.reload();
         },
+        sorter,
+        hideColumns,
     });
 
     const { downloadRender } = useDownload({
@@ -156,6 +161,7 @@ const ProTabulator = <
             <ProTableComponent<DataSource, Params>
                 dataSource={dataSource}
                 actionRef={actionRef}
+                showSorterTooltip={showSorterTooltip}
                 request={async (params, sorter) => {
                     const requestParams = getRequestParams<Params>(params, sorter);
                     tableStorage.setParams(requestParams);
