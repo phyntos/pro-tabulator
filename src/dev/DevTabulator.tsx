@@ -6,6 +6,8 @@ import ProTabulator from '../ProTabulator';
 import { ProTabulatorRequestParams } from '../types';
 import ruRU from 'antd/locale/ru_RU';
 import kkKZ from 'antd/locale/kk_KZ';
+import locale_ru from 'dayjs/locale/ru';
+import locale_kz from 'dayjs/locale/kk';
 
 type DevDataType = 'first' | 'second';
 
@@ -86,6 +88,7 @@ const getData = async (
 
 const DevTabulator = () => {
     const [lang] = useState<'kk' | 'ru'>('kk');
+    dayjs.locale(lang === 'ru' ? locale_ru : locale_kz);
 
     return (
         <ConfigProvider locale={lang === 'ru' ? ruRU : kkKZ}>

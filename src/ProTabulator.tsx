@@ -267,7 +267,12 @@ const ProTabulator = <
                                   }
                                   actionRef.current.reload();
                               },
-                              actionRender: (row, config, dom) => [dom.save, dom.cancel],
+                              actionRender: (row, config, dom) => [
+                                  <div className='pro-tabulator-edit-actions' key='actions'>
+                                      {dom.save}
+                                      {dom.cancel}
+                                  </div>,
+                              ],
                               form,
                               onChange: setEditableKeys,
                               saveText: <SaveOutlined />,
