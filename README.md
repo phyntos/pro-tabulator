@@ -44,7 +44,7 @@ npm install pro-tabulator
         },
         {
             dataIndex: 'type',
-            title: 'Тип номер',
+            title: 'Type',
             valueType: 'select',
             width: 500,
             valueEnum: { first: 'First', second: 'Second' }
