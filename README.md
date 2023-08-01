@@ -11,39 +11,88 @@ npm install pro-tabulator
 ## Usage
 
 ```js
-<ProTabulator<DataType, ParamsType>
-    tabulatorID='tabulatorID'
-    request={(params) => {
-        return {
-            data: [{ id: 1, name: 'Name', date: '2022-09-15T09:37', type: '1' }],
-            success: true,
-            total: 1,
-        };
+<ProTabulator<Data, Params>
+    request={getData}
+    ordered
+    editable
+    downloadProps={{
+        fileName: 'Data',
+    }}
+    id='Data'
+    uploadProps={{
+        columns: [
+            {
+                dataIndex: 'name',
+                title: 'Name',
+            },
+            {
+                dataIndex: 'type',
+                title: 'Type',
+            },
+        ],
+        onUpload: async (data) => {
+            await uploadData(data);
+        },
     }}
     columns={[
         {
             dataIndex: 'name',
             title: 'Name',
-            search: { type: 'text' },
+            valueType: 'text',
+            searchState: 'fixed',
+            width: 200,
+        },
+        {
+            dataIndex: 'type',
+            title: 'Тип номер',
+            valueType: 'select',
+            width: 500,
+            valueEnum: { first: 'First', second: 'Second' }
         },
         {
             dataIndex: 'date',
             title: 'Date',
-            search: { type: 'dateRange' },
+            valueType: 'dateApartRange',
+            searchState: 'hidden',
         },
         {
-            dataIndex: 'type',
-            title: 'Type',
-            search: {
-                type: 'select',
-                options: [
-                    { label: 'First', value: '1' },
-                    { label: 'Second', value: '2' },
-                ],
-                renderOption: true,
+            dataIndex: '',
+            title: 'Options',
+            valueType: 'option',
+            render: () => {
+                return (
+                    <Button size='small' type='link'>
+                        <LinkOutlined />
+                    </Button>
+                );
             },
         },
     ]}
-    rowKey='id'
+    editableProps={{
+        onSaveMultiple: async (data) => {
+            await onSaveMultiple(data);
+        },
+        onSave: async (data) => {
+            await onSave(data);
+        },
+        onDelete: async (data) => {
+            await onDelete(data);
+        },
+        onCreate: async () => {
+            return await onCreate();
+        },
+        onManualCreate: async (data) => {
+            return await onManualCreate(data);
+        },
+        onDeleteMultiple: async (data) => {
+           await onManualCreate();
+        },
+        hidden: {
+            actions: {
+                delete: true,
+            },
+            saveMultiple: true,
+        },
+    }}
 />
 ```
