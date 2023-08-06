@@ -42,9 +42,7 @@
     font-weight: normal;
 }
 
-.pro-tabulator-pro-table
-    .pro-tabulator-table-wrapper
-    .pro-tabulator-table-pagination.pro-tabulator-pagination {
+.pro-tabulator-pro-table .pro-tabulator-table-wrapper .pro-tabulator-table-pagination.pro-tabulator-pagination {
     margin: 16px 0 0;
 }
 
@@ -60,6 +58,14 @@
 
 .pro-tabulator-pro-table-list-toolbar-setting-item [class*=' pro-tabulator-tooltip'] {
     font-size: 16px;
+}
+
+.pro-tabulator-pro-table .pro-tabulator-pro-card {
+    background-color: transparent;
+}
+
+.pro-tabulator-pro-table .pro-tabulator-pro-table-list-toolbar-filter .pro-tabulator-pro-table-search {
+    background: transparent;
 }
 
 .pro-tabulator-pro-table .pro-tabulator-pro-card-body {
